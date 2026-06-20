@@ -30,7 +30,7 @@ header{background:#fff;border-bottom:3px solid var(--or);padding:0 1.5rem;displa
 .btn-su{background:#27ae60;color:#fff}.btn-su:hover{background:#219a52}
 .btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important}
 /* LOGIN */
-#page-login{min-height:100vh;background:linear-gradient(135deg,#1a0a4d 0%,var(--pu) 55%,#8B1A6B 100%);display:flex;align-items:center;justify-content:center;padding:2rem}
+#page-login{min-height:100vh;background:linear-gradient(135deg,#1a0a4d 0%,var(--pu) 55%,#8B1A6B 100%);display:flex;align-items:center;justify-content:center;padding:2rem}#page-login.active{display:flex}
 .lcard{background:#fff;border-radius:16px;padding:2.5rem;width:100%;max-width:420px;box-shadow:0 8px 40px rgba(0,0,0,.25)}
 .llogo{text-align:center;margin-bottom:2rem}
 .lbadge{width:70px;height:70px;border-radius:18px;background:linear-gradient(135deg,var(--or),#c94e18);color:#fff;font-size:1.8rem;font-weight:900;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(244,107,47,.4);margin-bottom:1rem}
@@ -156,6 +156,7 @@ footer{text-align:center;padding:2rem 1.5rem 3rem;font-size:.74rem;color:var(--l
 .setup-box code{background:#f0f0f0;padding:2px 5px;border-radius:3px;font-size:.79rem}
 @media(max-width:600px){.mc{padding:1rem}.pname{font-size:1.3rem}.pigrid{grid-template-columns:1fr}.apgrid{grid-template-columns:repeat(3,1fr)}}
 </style>
+<!-- v2.1 fixed -->
 </head>
 <body>
 
@@ -416,7 +417,7 @@ function initials(n) { return n.split(' ').slice(0,2).map(function(w){return w[0
 function sv(k,v) { try{localStorage.setItem('pmic26_'+k,JSON.stringify(v));}catch(e){} }
 function ld(k) { try{var v=localStorage.getItem('pmic26_'+k);return v?JSON.parse(v):null;}catch(e){return null;} }
 function rm(k) { try{localStorage.removeItem('pmic26_'+k);}catch(e){} }
-function showPage(id) { document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');}); document.getElementById(id).classList.add('active'); }
+function showPage(id) { document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active'); p.style.display='none';}); var el=document.getElementById(id); el.classList.add('active'); el.style.display=''; }
 function ge(id) { return document.getElementById(id); }
 function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
@@ -440,18 +441,29 @@ var BEHAV = [
 
 /* ===== AUTH ===== */
 function doLogin() {
-  var u = ge('l-user').value.trim().toLowerCase();
-  var p = ge('l-pw').value.trim();
-  ge('lerr').style.display = 'none';
-  if (u === ADMIN_CREDS.username && p === ADMIN_CREDS.password) {
-    CU = {type:'admin', name:'Administrateur', username:'adminpmic'};
-    loadAdmin(); showPage('page-admin'); return;
+  try {
+    var u = ge('l-user').value.trim().toLowerCase();
+    var p = ge('l-pw').value.trim();
+    var lerrEl = ge('lerr');
+    if(lerrEl) lerrEl.style.display = 'none';
+    if (u === ADMIN_CREDS.username && p === ADMIN_CREDS.password) {
+      CU = {type:'admin', name:'Administrateur', username:'adminpmic'};
+      showPage('page-admin');
+      loadAdmin();
+      return;
+    }
+    var usr = USERS[u];
+    if (!usr || p !== usr.password) {
+      if(lerrEl) lerrEl.style.display = 'block';
+      return;
+    }
+    CU = usr;
+    showPage('page-dash');
+    loadDash();
+  } catch(err) {
+    var lerrEl = ge('lerr');
+    if(lerrEl) { lerrEl.textContent = 'Erreur technique: ' + err.message; lerrEl.style.display = 'block'; }
   }
-  var usr = USERS[u];
-  if (!usr || p !== usr.password) { ge('lerr').style.display = 'block'; return; }
-  CU = usr;
-  loadDash();
-  showPage('page-dash');
 }
 function logout() { CU=null; curTab=0; curStep=0; curTargetId=null; ge('l-user').value=''; ge('l-pw').value=''; showPage('page-login'); }
 function backToDash() { loadDash(); showPage('page-dash'); }
@@ -522,7 +534,9 @@ function renderAutoSec(cont) {
   cont.innerHTML = '<div class="card"><div class="card-hd"><div class="cion io">📝</div><div><div class="ctitle">Mon Auto-évaluation</div><div class="csub">Formulaire en 5 étapes — sauvegardez à tout moment</div></div></div>'
     +'<div class="alert ai">ℹ️ Notez chaque critère de 1 à 5. Cliquez <strong>Sauvegarder</strong> pour reprendre plus tard.</div>'
     +'<div id="afc"></div></div>';
-  formMode = 'auto'; curStep = 0; curTargetId = null; scores = {};
+  formMode = 'auto'; curTargetId = null; scores = {};
+  var draftA = ld('draftA_'+CU.username);
+  curStep = (draftA && draftA.step !== undefined) ? draftA.step : 0;
   buildSteps('afc','auto');
 }
 
@@ -551,7 +565,9 @@ function onOSel() {
     ge('ofc').innerHTML='<div class="alert as">✅ Vous avez déjà évalué <strong>'+esc(v?v[2]:'')+'</strong> (soumis le '+done+').</div>';
     return;
   }
-  formMode='others'; curStep=0; scores={};
+  formMode='others'; scores={};
+  var draftO = ld('draftO_'+CU.username+'_'+id);
+  curStep = (draftO && draftO.step !== undefined) ? draftO.step : 0;
   buildSteps('ofc','others');
 }
 
@@ -562,7 +578,6 @@ function buildSteps(contId, mode) {
   var cont = ge(contId); if(!cont) return;
   var dk = draftKey(mode);
   var draft = ld(dk)||{};
-  if (draft.step!==undefined) curStep=draft.step;
   cont.innerHTML = '<div class="snav" id="'+mode+'-nav">'+buildNavHTML()+'</div>'
     +'<div id="'+mode+'-sec"></div>'
     +'<div class="fnav">'
@@ -920,7 +935,7 @@ function loadAdmin() {
     + '<a href="https://docs.google.com/spreadsheets/d/1Et-XiUFJF68SgDxpkXe-sNl1SrWlalJ4e8Fd8WiMspo" target="_blank" class="btn btn-pr">👥 Évaluations des Pairs</a>'
     + '</div></div>';
   // Fetch tracking data
-  fetch(SCRIPT_URL + '?action=getTracking&token=PMIC2026ADMIN')
+  fetch(SCRIPT_URL + '?action=getTracking&token=PMIC2026ADMIN', {redirect:'follow'})
     .then(function(r) { return r.json(); })
     .then(function(rows) {
       if (!rows || rows.length < 2) { ge('adm-table').innerHTML='<p style="color:var(--li);font-size:.82rem">Aucune soumission enregistrée pour l\'instant.</p>'; return; }
