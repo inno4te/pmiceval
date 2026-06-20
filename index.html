@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PMI Cameroon — Évaluations des Volontaires 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--or:#F46B2F;--pu:#5B2DB8;--cy:#33C6E3;--gr:#F3F3F3;--tm:#1a1a2e;--me:#555;--li:#888}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--gr);color:var(--tm);min-height:100vh}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-thumb{background:var(--pu);border-radius:3px}
+.page{display:none;min-height:100vh}.page.active{display:block}
+/* HEADER */
+header{background:#fff;border-bottom:3px solid var(--or);padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:66px;box-shadow:0 2px 8px rgba(0,0,0,.08);position:sticky;top:0;z-index:100}
+.hbrand{display:flex;align-items:center;gap:11px}
+.lbadge-h{background:linear-gradient(135deg,var(--or),#c94e18);color:#fff;font-weight:900;font-size:.88rem;width:40px;height:40px;border-radius:9px;display:flex;align-items:center;justify-content:center}
+.brand-text h1{font-size:.9rem;font-weight:700;line-height:1.2}.brand-text span{font-size:.65rem;color:var(--li);text-transform:uppercase;letter-spacing:.5px}
+.hright{display:flex;align-items:center;gap:8px}
+.uchip{display:flex;align-items:center;gap:7px;background:var(--gr);border-radius:20px;padding:5px 12px;font-size:.8rem;font-weight:600}
+.uav{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--pu),#3a1a85);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:700}
+/* BUTTONS */
+.btn{padding:9px 18px;border:none;border-radius:8px;cursor:pointer;font-size:.83rem;font-weight:600;transition:all .2s;display:inline-flex;align-items:center;gap:6px;font-family:inherit;line-height:1}
+.btn-sm{padding:6px 13px;font-size:.76rem}.btn-lg{padding:13px 26px;font-size:.96rem}
+.btn-pr{background:var(--or);color:#fff;box-shadow:0 3px 10px rgba(244,107,47,.3)}.btn-pr:hover{background:#d4561f;transform:translateY(-1px)}
+.btn-se{background:var(--pu);color:#fff}.btn-se:hover{background:#4a24a0;transform:translateY(-1px)}
+.btn-cy{background:var(--cy);color:#fff}.btn-cy:hover{background:#25b0ca}
+.btn-gh{background:transparent;color:var(--me);border:1.5px solid #ddd}.btn-gh:hover{background:#f0f0f0}
+.btn-wa{background:#25d366;color:#fff}.btn-wa:hover{background:#1da851}
+.btn-su{background:#27ae60;color:#fff}.btn-su:hover{background:#219a52}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important}
+/* LOGIN */
+#page-login{min-height:100vh;background:linear-gradient(135deg,#1a0a4d 0%,var(--pu) 55%,#8B1A6B 100%);display:flex;align-items:center;justify-content:center;padding:2rem}
+.lcard{background:#fff;border-radius:16px;padding:2.5rem;width:100%;max-width:420px;box-shadow:0 8px 40px rgba(0,0,0,.25)}
+.llogo{text-align:center;margin-bottom:2rem}
+.lbadge{width:70px;height:70px;border-radius:18px;background:linear-gradient(135deg,var(--or),#c94e18);color:#fff;font-size:1.8rem;font-weight:900;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(244,107,47,.4);margin-bottom:1rem}
+.llogo h2{font-size:1.25rem;font-weight:800}.llogo p{font-size:.74rem;color:var(--li);margin-top:4px}
+.ldiv{height:3px;background:linear-gradient(90deg,var(--or),var(--pu),var(--cy));border-radius:2px;margin:1.3rem 0}
+.fg{margin-bottom:1rem}
+.fg label{display:block;font-size:.72rem;font-weight:700;color:var(--me);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+.fg input,.fg select,.fg textarea{width:100%;padding:11px 14px;border:2px solid #eee;border-radius:8px;font-size:.9rem;font-family:inherit;color:var(--tm);transition:border-color .2s;background:#fff}
+.fg input:focus,.fg select:focus,.fg textarea:focus{outline:none;border-color:var(--pu);box-shadow:0 0 0 3px rgba(91,45,184,.1)}
+.fg textarea{min-height:80px;resize:vertical}
+.lerr{background:#fee;color:#c0392b;border:1px solid #fcc;border-radius:8px;padding:10px 14px;font-size:.82rem;margin-bottom:1rem;display:none}
+/* MAIN */
+.mc{padding:1.8rem 1.5rem;max-width:1100px;margin:0 auto}
+/* CARDS */
+.card{background:#fff;border-radius:12px;padding:1.4rem;box-shadow:0 2px 8px rgba(0,0,0,.08);margin-bottom:1.3rem}
+.card-hd{display:flex;align-items:center;gap:11px;margin-bottom:1.1rem;padding-bottom:.9rem;border-bottom:1px solid #f0f0f0}
+.cion{width:40px;height:40px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.io{background:#fff3ee}.ip{background:#f0ebff}.ic{background:#e8f9fd}.ig{background:#e8f8f0}
+.ctitle{font-size:.95rem;font-weight:700}.csub{font-size:.74rem;color:var(--li);margin-top:2px}
+/* PROFILE */
+.pcard{background:linear-gradient(135deg,var(--pu) 0%,#8B1A6B 100%);border-radius:16px;padding:1.7rem;color:#fff;margin-bottom:1.3rem;position:relative;overflow:hidden}
+.pcard::after{content:'';position:absolute;top:-25px;right:-25px;width:130px;height:130px;border-radius:50%;background:rgba(255,255,255,.06)}
+.pwelc{font-size:.7rem;opacity:.8;text-transform:uppercase;letter-spacing:1px}
+.pname{font-size:1.55rem;font-weight:900;line-height:1.2;margin:4px 0 11px}
+.pmeta{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:1rem}
+.pbadge{background:rgba(255,255,255,.15);border-radius:20px;padding:4px 11px;font-size:.72rem;font-weight:500}
+.pbadge.oc{background:rgba(244,107,47,.4)}.pbadge.cc{background:rgba(51,198,227,.3)}.pbadge.gn{background:rgba(39,174,96,.4)}
+.pigrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:9px}
+.piitem{background:rgba(255,255,255,.1);border-radius:8px;padding:9px 11px}
+.pilabel{font-size:.65rem;opacity:.7;text-transform:uppercase;letter-spacing:.5px}
+.pivalue{font-size:.84rem;font-weight:600;margin-top:2px}
+/* STEPS NAV */
+.snav{display:flex;align-items:center;padding:1.1rem 1.4rem;background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.08);margin-bottom:1.5rem;overflow-x:auto}
+.sitem{display:flex;align-items:center;flex:1;min-width:0}
+.sbub{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.74rem;font-weight:700;flex-shrink:0;transition:all .3s;border:2px solid #e0e0e0;background:#fff;color:var(--li)}
+.sbub.done{background:var(--pu);border-color:var(--pu);color:#fff}
+.sbub.active{background:var(--or);border-color:var(--or);color:#fff;box-shadow:0 0 0 4px rgba(244,107,47,.2)}
+.slabel{font-size:.61rem;color:var(--li);margin-left:7px;line-height:1.3;display:none}
+@media(min-width:640px){.slabel{display:block}}
+.sline{flex:1;height:2px;background:#e0e0e0;margin:0 5px;min-width:12px}
+.sline.done{background:var(--pu)}
+/* FORM SECTION */
+.fsec{display:none}.fsec.active{display:block}
+/* STAR RATING */
+.rgrid{display:flex;flex-direction:column;gap:.8rem}
+.rrow{display:grid;grid-template-columns:1fr auto;gap:10px;padding:.85rem;background:var(--gr);border-radius:9px;align-items:start}
+.rlabel{font-size:.85rem;font-weight:600}
+.star-row{display:flex;gap:3px;align-items:center}
+.sbtn{background:none;border:none;cursor:pointer;font-size:1.5rem;color:#ddd;transition:all .15s;padding:1px;line-height:1}
+.sbtn.on{color:var(--or)}.sbtn:hover{color:var(--or);transform:scale(1.12)}
+.rnote{font-size:.82rem;font-weight:700;color:var(--or);min-width:26px;text-align:center}
+.jrow{grid-column:1/-1;margin-top:3px}
+.jrow input,.jrow textarea{width:100%;padding:8px 11px;border:1.5px solid #e0e0e0;border-radius:6px;font-size:.82rem;font-family:inherit;background:#fff;color:var(--tm)}
+.jrow input:focus,.jrow textarea:focus{outline:none;border-color:var(--cy)}
+/* SCORE BOX */
+.sbox{background:linear-gradient(135deg,var(--or),#c94e18);border-radius:12px;padding:1.4rem;color:#fff;text-align:center;margin:1.3rem 0}
+.snum{font-size:2.8rem;font-weight:900;line-height:1}.slbl{font-size:.78rem;opacity:.85;margin-top:3px}
+.sbk{display:flex;justify-content:center;gap:2rem;margin-top:.9rem}
+.sbki{text-align:center}.sbkin{font-size:1.25rem;font-weight:800}.sbkl{font-size:.68rem;opacity:.8}
+/* APPRECIATION */
+.apgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(115px,1fr));gap:9px;margin:1rem 0}
+.apbtn{padding:11px 8px;border:2px solid #e0e0e0;border-radius:9px;background:#fff;cursor:pointer;text-align:center;font-family:inherit;font-size:.77rem;font-weight:600;color:var(--me);transition:all .2s}
+.apbtn:hover{border-color:var(--or);color:var(--or)}.apbtn.sel{border-color:var(--or);background:var(--or);color:#fff}
+.apemoji{font-size:1.2rem;display:block;margin-bottom:4px}
+/* CHECKBOXES */
+.cbgrp{display:flex;flex-direction:column;gap:7px}
+.cbitem{display:flex;align-items:center;gap:9px;padding:9px 13px;border:1.5px solid #e0e0e0;border-radius:8px;cursor:pointer;transition:all .2s;user-select:none}
+.cbitem:hover{border-color:var(--pu);background:#f8f6ff}.cbitem.chk{border-color:var(--pu);background:#f0ebff}
+.cbfake{width:19px;height:19px;border-radius:4px;border:2px solid #ccc;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.7rem;color:#fff}
+.cbitem.chk .cbfake{background:var(--pu);border-color:var(--pu)}
+/* ADMIN */
+.stgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:1rem;margin-bottom:1.3rem}
+.stcard{background:#fff;border-radius:12px;padding:1.1rem;box-shadow:0 2px 8px rgba(0,0,0,.08);text-align:center;position:relative;overflow:hidden}
+.stcard::before{content:'';position:absolute;top:0;left:0;right:0;height:4px}
+.stcard.or::before{background:var(--or)}.stcard.pu::before{background:var(--pu)}.stcard.cy::before{background:var(--cy)}.stcard.gn::before{background:#27ae60}
+.stnum{font-size:2rem;font-weight:900;line-height:1}.stlbl{font-size:.74rem;color:var(--li);margin-top:4px}
+.pbwrap{background:#f0f0f0;border-radius:20px;height:7px;margin-top:.7rem;overflow:hidden}
+.pb{height:100%;border-radius:20px;transition:width .8s ease}
+.pb.or{background:linear-gradient(90deg,var(--or),#ff8c42)}.pb.pu{background:linear-gradient(90deg,var(--pu),#8b52ff)}
+/* ALERTS */
+.alert{padding:10px 14px;border-radius:8px;font-size:.82rem;margin-bottom:.9rem;display:flex;align-items:flex-start;gap:9px}
+.ai{background:#e8f9fd;border-left:4px solid var(--cy);color:#0a7a8f}
+.as{background:#e8f8f0;border-left:4px solid #27ae60;color:#1a6e3e}
+.aw{background:#fff8e8;border-left:4px solid #f39c12;color:#8a5d00}
+/* TABLE */
+.dtbl{width:100%;border-collapse:collapse;font-size:.79rem}
+.dtbl th{background:var(--gr);padding:8px 11px;text-align:left;font-size:.68rem;text-transform:uppercase;letter-spacing:.5px;color:var(--me);font-weight:600}
+.dtbl td{padding:8px 11px;border-bottom:1px solid #f5f5f5;vertical-align:middle}
+.dtbl tr:hover td{background:#fafafa}
+.sbadge{padding:3px 9px;border-radius:12px;font-size:.7rem;font-weight:600}
+.sd{background:#e8f8f0;color:#27ae60}.sp{background:#fff3ee;color:var(--or)}
+/* MODAL */
+.moverlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:2000;display:none;align-items:center;justify-content:center;padding:1rem}
+.moverlay.open{display:flex}
+.modal{background:#fff;border-radius:16px;padding:2rem;max-width:500px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,.2)}
+.mhd{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.3rem}
+.mclose{background:none;border:none;font-size:1.5rem;cursor:pointer;color:var(--li);padding:0;line-height:1}
+/* THANK YOU */
+.tyc{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem;background:var(--gr)}
+.tybox{background:#fff;border-radius:16px;padding:3rem;text-align:center;max-width:500px;width:100%;box-shadow:0 8px 40px rgba(0,0,0,.12)}
+.tyico{font-size:4rem;margin-bottom:1rem;animation:bou .5s ease}
+@keyframes bou{0%{transform:scale(.3)}60%{transform:scale(1.15)}100%{transform:scale(1)}}
+.tytt{font-size:1.65rem;font-weight:900;margin-bottom:.5rem}.tysb{font-size:.9rem;color:var(--li);margin-bottom:2rem}
+/* FOOTER */
+footer{text-align:center;padding:2rem 1.5rem 3rem;font-size:.74rem;color:var(--li);border-top:1px solid #e8e8e8;background:#fff;margin-top:3rem}
+/* TABS */
+.tabs{display:flex;gap:4px;background:var(--gr);border-radius:9px;padding:4px;margin-bottom:1.3rem}
+.tbtn{flex:1;padding:9px;border:none;border-radius:7px;background:transparent;cursor:pointer;font-family:inherit;font-size:.8rem;font-weight:600;color:var(--me);transition:all .2s}
+.tbtn.active{background:#fff;color:var(--pu);box-shadow:0 2px 8px rgba(0,0,0,.08)}
+/* ROLE SECTION */
+.rsec{border:2px solid #f0f0f0;border-radius:11px;padding:1.3rem;margin-bottom:1.2rem}
+.rsec-title{font-size:.9rem;font-weight:700;color:var(--pu);margin-bottom:.9rem;display:flex;align-items:center;gap:7px}
+.rb{background:var(--pu);color:#fff;width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;flex-shrink:0}
+/* MISC */
+.spin{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:sp .8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.sbanner{background:#fff3ee;border:1.5px solid var(--or);border-radius:9px;padding:11px 15px;margin-bottom:1.2rem;display:none;align-items:center;justify-content:space-between;gap:11px;flex-wrap:wrap}
+.sbanner.vis{display:flex}
+.fnav{display:flex;justify-content:space-between;align-items:center;margin-top:1.7rem;padding-top:1.2rem;border-top:1px solid #f0f0f0;flex-wrap:wrap;gap:9px}
+.edrop{width:100%;padding:11px 14px;border:2px solid #e0e0e0;border-radius:8px;font-size:.9rem;font-family:inherit;color:var(--tm);transition:border-color .2s;background:#fff}
+.edrop:focus{outline:none;border-color:var(--pu)}
+.setup-box{background:#fff8e8;border:2px dashed #f39c12;border-radius:11px;padding:1.3rem;margin-bottom:1.3rem}
+.setup-box code{background:#f0f0f0;padding:2px 5px;border-radius:3px;font-size:.79rem}
+@media(max-width:600px){.mc{padding:1rem}.pname{font-size:1.3rem}.pigrid{grid-template-columns:1fr}.apgrid{grid-template-columns:repeat(3,1fr)}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="page-login" class="page active">
+<div class="lcard">
+  <div class="llogo">
+    <div class="lbadge">PMI</div>
+    <h2>PMI Cameroon</h2>
+    <p>Système d'Évaluation des Volontaires 2026</p>
+  </div>
+  <div class="ldiv"></div>
+  <div class="lerr" id="lerr">Identifiants incorrects. Veuillez réessayer.</div>
+  <div class="fg"><label>Nom d'utilisateur</label><input id="l-user" type="text" placeholder="Ex: forteh" autocomplete="username" onkeydown="if(event.key==='Enter')doLogin()"></div>
+  <div class="fg"><label>Mot de passe</label><input id="l-pw" type="password" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+  <button class="btn btn-se btn-lg" style="width:100%;justify-content:center;margin-top:.5rem" onclick="doLogin()">Se connecter →</button>
+  <p style="text-align:center;margin-top:1.4rem;font-size:.72rem;color:var(--li)">© PMI Cameroon · Concept &amp; Design : Innocent Forteh</p>
+</div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="page-dash" class="page">
+<header>
+  <div class="hbrand">
+    <div class="lbadge-h">PMI</div>
+    <div class="brand-text"><h1>PMI Cameroon</h1><span>Évaluations 2026</span></div>
+  </div>
+  <div class="hright">
+    <div class="uchip"><div class="uav" id="hav"></div><span id="hname"></span></div>
+    <button class="btn btn-gh btn-sm" onclick="logout()">Déconnexion</button>
+  </div>
+</header>
+<div class="mc">
+  <div id="profile-card"></div>
+  <div class="sbanner vis" id="corr-banner">
+    <span style="font-size:.82rem">⚠️ Vos informations ne semblent pas correctes ?</span>
+    <button class="btn btn-wa btn-sm" onclick="openCorrModal()">📱 Signaler une erreur</button>
+  </div>
+  <div class="sbanner" id="draft-banner">
+    <span style="font-size:.82rem">💾 Progression sauvegardée détectée. Voulez-vous reprendre ?</span>
+    <button class="btn btn-pr btn-sm" onclick="resumeDraft()">Continuer →</button>
+  </div>
+  <div id="dash-tabs"></div>
+  <div id="dash-content"></div>
+</div>
+<footer>© PMI Cameroon &nbsp;·&nbsp; <strong>Concept &amp; Design : Innocent Forteh</strong></footer>
+</div>
+
+<!-- ADMIN -->
+<div id="page-admin" class="page">
+<header>
+  <div class="hbrand">
+    <div class="lbadge-h">PMI</div>
+    <div class="brand-text"><h1>PMI Cameroon — Admin</h1><span>Tableau de Bord</span></div>
+  </div>
+  <div class="hright">
+    <button class="btn btn-cy btn-sm" onclick="loadAdmin()">🔄 Actualiser</button>
+    <button class="btn btn-gh btn-sm" onclick="logout()">Déconnexion</button>
+  </div>
+</header>
+<div class="mc" id="admin-content"></div>
+<footer>© PMI Cameroon &nbsp;·&nbsp; <strong>Concept &amp; Design : Innocent Forteh</strong></footer>
+</div>
+
+<!-- THANK YOU -->
+<div id="page-ty" class="page">
+<div class="tyc"><div class="tybox">
+  <div class="tyico">✅</div>
+  <div class="tytt" id="ty-title">Merci !</div>
+  <div class="tysb" id="ty-sub">Votre évaluation a été soumise avec succès.</div>
+  <button class="btn btn-se btn-lg" onclick="backToDash()" style="margin-bottom:.9rem;width:100%;justify-content:center">← Retour au tableau de bord</button>
+  <button class="btn btn-gh" onclick="logout()" style="width:100%;justify-content:center">🚪 Déconnexion</button>
+  <p style="margin-top:2rem;font-size:.72rem;color:var(--li)">© PMI Cameroon · Concept &amp; Design : Innocent Forteh</p>
+</div></div>
+</div>
+
+<!-- CORRECTION MODAL -->
+<div class="moverlay" id="corrModal">
+<div class="modal">
+  <div class="mhd">
+    <div><div class="ctitle">Signaler une erreur d'information</div><div class="csub">Envoi direct via WhatsApp à l'équipe PMI</div></div>
+    <button class="mclose" onclick="closeCorrModal()">×</button>
+  </div>
+  <div id="corr-current" style="background:var(--gr);border-radius:8px;padding:1rem;margin-bottom:1rem;font-size:.81rem;line-height:1.6"></div>
+  <div class="fg">
+    <label>Qu'est-ce qui est incorrect ?</label>
+    <select id="corr-field">
+      <option value="">Sélectionner...</option>
+      <option>Nom complet</option><option>Rôle(s)</option><option>Département</option><option>Email</option><option>Autre</option>
+    </select>
+  </div>
+  <div class="fg">
+    <label>Information correcte</label>
+    <textarea id="corr-correct" placeholder="Entrez l'information correcte ici..."></textarea>
+  </div>
+  <button class="btn btn-wa" style="width:100%;justify-content:center" onclick="sendCorrWhatsApp()">📱 Envoyer via WhatsApp (+237 695264788)</button>
+</div>
+</div>
+
+<script>
+/* ===== CONFIGURATION ===== */
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwwnyLacgjaEghPzXtEK8oBA04xqqUB0RvzzDH0Ts21WD0ik7SaMjFrbkcLJmV9FfjY/exec';
+
+/* ===== VOLUNTEER DATA — 97 members =====
+   Format: [id, pmiId, name, roles[], dept, deptAssoc|null, evaluators[], email, startSerial, endSerial, username]
+*/
+const V = [
+[1,"PMICC-12037026","ABOSSOLO Martin-Landry",["Recruitment Events Coordinator"],"VP Membership",null,["bertrand","noella"],"abossoloml@gmail.com",45946,46387,"abossolo"],
+[2,"PMICC-10649880","ACHU PRINCE - WILL ACHU",["Assistant du Chef de Projet de la Conférence Annuelle 2026","Assistant Communication & Médias au 2ème Teambuilding PMICC"],"ALL","Tous, VP Communication",["winnie","yemele","musi"],"princewillachu@outlook.com",46090,46380,"achu"],
+[3,"PMICC-11446981","AFOUNATANG Prosper",["Email & Newsletter Coordinator"],"VP Communication",null,["yemele"],"prospernsisse@gmail.com",45925,46387,"afounatang"],
+[4,"PMICC-12390997","AMOUGOU Catherine",["Chargé(e) Recrutement et Engagement des Volontaires"],"VP Volunteering",null,["winnie","ngueukoa"],"amoukatoucha@yahoo.fr",46083,46387,"amougou"],
+[5,"PMICC-5727621","ASSENA Elisabeth Marleine",["Responsable du Suivi, de l'Évaluation et du Reporting des Volontaires"],"VP Volunteering",null,["winnie","ewane"],"marleinae2003@yahoo.fr",46020,46387,"assena"],
+[6,"PMICC-10713118","AYASSOU Kokou",["Mentor pour Développement professionnel et Accélération des Certifications"],"VP Professional Development","VP Membership - VP Volunteering",["oubilitek","bertrand","winnie"],"ericaya2023@gmail.com",45977,46387,"ayassou"],
+[7,"PMICC-11971039","AYIHONSI Bénédicte",["Email & Newsletter Coordinator"],"VP Communication",null,["yemele"],"bayihonsi@gmail.com",45925,46387,"ayihonsi"],
+[8,"PMICC-11965791","BAKARY Safiya",["Session host & orientation facilitator"],"VP Membership",null,["bertrand"],"safiyabakary53@gmail.com",45925,46387,"bakary"],
+[9,"PMICC-8395414","BALATA Raoul Clavel",["Mentor pour Développement professionnel et Accélération des Certifications"],"VP Professional Development","VP Membership - VP Volunteering",["oubilitek","bertrand","winnie"],"clavelsky@gmail.com",45977,46387,"balata"],
+[10,"PMICC-8469687","BAMO Aimé",["Academic Outreach Manager (Maroua)"],"VP Professional Development",null,["oubilitek"],"bamoaime@gmail.com",46054,46387,"bamo"],
+[11,"PMICC-12029401","BARANE Marina",["Analytics & reporting officer"],"VP Membership",null,["bertrand"],"baranemarina@gmail.com",45931,46387,"barane"],
+[12,"PMICC-112682215","BATJOM BA BOOH Claude Angèle",["Responsable Éthique et Culture d'Entreprise"],"VP Administration, Governance & Ethics",null,["dorine"],"angelbatjom@yahoo.fr",46068,46446,"batjom"],
+[13,"PMICC-12001685","BONGKA MPARA Carine",["Member Touchpoint Coordinator"],"VP Membership",null,["bertrand"],"mpara.carine@gmail.com",45925,46387,"bongka"],
+[14,"PMICC-9778897","BUINWI WEBNDA Kenneth",["Graphic Designer"],"VP Communication",null,["yemele"],"kwebnda1721446@gmail.com",45792,46387,"buinwi"],
+[15,"PMICC-12420509","DE BILONG LORD Leticia",["Local Communications & Media Support Officer – PMI Yaoundé Branch"],"Branche Yaoundé",null,["yemele"],"leticiadebilong91@gmail.com",46113,46387,"debilong"],
+[16,"PMICC-11268221","DEUDGUI Vincent de Paul",["Responsable du Pôle Administration"],"VP Administration, Governance & Ethics",null,["dorine"],"deuvinpaul@yahoo.fr",46069,46446,"deudgui"],
+[17,"PMICC-11802132","DEWINGONG FORJONG Tarcisius",["Responsable Informatique (IT Manager)"],"ALL","Tous",["noella","dorine"],"Tdewingong@gmail.com",46104,46387,"dewingong"],
+[18,"PMICC-12013372","DJIMELI Hervé",["Welcome Pack Coordinator"],"VP Membership",null,["bertrand"],"hervedjimeli43@gmail.com",45925,46387,"djimeli"],
+[19,"PMICC-11330091","DJIRAIBE Innocent",["Mentor pour Développement professionnel et Accélération des Certifications","Mentor pour Intégration et Engagement"],"VP Professional Development","VP Membership - VP Volunteering",["oubilitek","bertrand","winnie"],"djiraibeinnocent@gmail.com",45977,46387,"djiraibe"],
+[20,"PMICC-9603281","DJONGANG GAIWE Christian",["Point Focal Yaounde 2026"],"ALL","Tous",["noella","winnie"],"gaiwedjonkreo@gmail.com",46018,46387,"djongang"],
+[21,"PMICC-12493641","DJONI OSAKE Ted Dilan",["Event Logistics Coordinator – PMI Yaoundé Branch"],"Branche Yaoundé",null,["djongang"],"dilandjoni2@gmail.com",46113,46387,"djoni"],
+[22,"PMICC-12148588","DJOUSSE FOFE Horace",["Mentor pour Développement professionnel et Accélération des Certifications"],"VP Professional Development","VP Membership - VP Volunteering",["oubilitek"],"horace.djousse@yahoo.com",45977,46387,"djousse"],
+[23,"PMICC-12001768","DONGMO Armand",["Data quality & entry officer"],"VP Membership",null,["bertrand"],"dongmo@example.com",45925,46387,"dongmo"],
+[24,"PMICC-12027835","DUFAH DUBEU SINORITA",["Volunteers Spotlight Series Coordinator 1S2026"],"VP Volunteering","VP Communication",["yemele","winnie"],"gracedufah21@gmail.com",46013,46211,"dufah"],
+[25,"PMICC-6371268","EBAI BESONG Ebot",["Communication Design Manager"],"VP Communication",null,["yemele"],"ebaibesongebot@gmail.com",45839,46387,"ebai"],
+[26,"PMICC-9806230","EBONGO Arisber Trésor",["Mentor pour Intégration et Engagement"],"VP Professional Development","VP Membership - VP Volunteering",["oubilitek","bertrand"],"arisber.ebongo@gmail.com",45977,46387,"ebongo"],
+[27,"PMICC-2755889","EDIOH PEM FREDERIC",["Chargé(e) de la Formation et du Développement des Volontaires"],"VP Volunteering",null,["ouokam","winnie"],"frededy07@yahoo.fr",46027,46387,"edioh"],
+[28,"PMICC-8167488","EDJOH",["Professional Development Programs Coordinator – PMI Yaoundé Branch"],"Branche Yaoundé",null,["oubilitek"],"edjohc@yahoo.fr",46113,46387,"edjoh"],
+[29,"PMICC-11282085","EKWE Erica Manuela",["Chargé(e) d'archivage financier et de la documentation comptable – Assistante VP Finance"],"VP Finance",null,["amenguele"],"manuelaerica48@gmail.com",46069,46752,"ekwe"],
+[30,"PMICC-12400463","ELONG Etiennette Bertine",["Associate Public Relationships","Communication Officer for Douala Branch"],"VP Marketing & Public Relations, VP Communication",null,["yemele","ebongo"],"elongberti@gmail.com",46083,46387,"elong"],
+[31,"PMICC-8277790","MOUELLE DIBOUE CARINE",["Content & Editorial Support","Coordinateur Volunteer Skills Lab 2026"],"VP Communication, VP Volunteering","VP Professional Development",["yemele","oubilitek"],"dibouecarine@gmail.com",45894,46387,"mouelle"],
+[32,"PMICC-9665096","EWANE Christian Valery",["Chargé du Suivi, de l'Évaluation et du Reporting des Volontaires"],"VP Volunteering",null,["winnie","assena"],"ewanechristian86@gmail.com",46020,46387,"ewane"],
+[33,"PMICC-5731823","EYA'ANE Jessica",["Recognition & Celebration Lead"],"VP Membership",null,["winnie"],"eyaanecassije12@gmail.com",45945,46387,"eyaane"],
+[34,"PMICC-12047543","FORTEH Innocent",["Chargé de coordination opérationnelle des activités du volontariat"],"VP Volunteering",null,["winnie"],"forteh@gmail.com",46020,46387,"forteh"],
+[35,"PMICC-12388495","FOUDA Henri Junior",["Chargé(e) Recrutement et Engagement des Volontaires"],"VP Volunteering",null,["winnie","ngueukoa"],"henrijuniorfouda@gmail.com",46083,46387,"fouda"],
+[36,"PMICC-10368492","FOUELEFACK Perrier",["Responsable du PMO (Chair du Comité PMO)"],"Président / VP Administration, Governance & Ethics",null,["noella","dorine"],"perriercarmelle@yahoo.fr",46082,46446,"fouelefack"],
+[37,"PMICC-4831171","GUIADEM SIMO Valdes Linda",["Assistant VP Professional Development"],"VP Professional Development",null,["oubilitek"],"valdes.guiadem@gmail.com",45870,46387,"guiadem"],
+[38,"PMICC-12296859","GUINTANG ASSIENE Jules Martial",["Community Impact & Social Programs Coordinator – PMI Yaoundé Branch"],"Branche Yaoundé",null,["yemele"],"guintangjules@gmail.com",46113,46387,"guintang"],
+[39,"PMICC-11999015","HANAN Luc",["Comptable"],"VP Finance",null,["amenguele"],"muluem42@gmail.com",45918,46387,"hanan"],
+[40,"PMICC-9723005","HENKE BANTHEU David Blaise",["Assistant Point Focal Douala 2026"],"ALL",null,["koum","noella"],"davidbantheu@gmail.com",46018,46387,"henke"],
+[41,"PMICC-11944245","JENGU JENGU Guy Beaudry",["Member Touchpoint Coordinator"],"VP Membership",null,["bertrand"],"jenguguy@icloud.com",45957,46387,"jengu"],
+[42,"PMICC-12097367","KEDY Estelle Marthe",["Assistant Point Focal Yaounde 2026"],"ALL",null,["djongang","noella"],"estelle.kedy88@gmail.com",46018,46387,"kedy"],
+[43,"PMICC-12016016","KISITO KANJI Fowang",["Assistant Sponsors & Relations Partenaires au 2ème Teambuilding PMICC","Recruitment Events Coordinator"],"VP Volunteering, VP Membership",null,["bertrand","winnie"],"Fowangkisito100@gmail.com",45925,46387,"kisito"],
+[44,"PMICC-4395811","KONE SIM Robert",["Mentor pour Intégration et Engagement"],"VP Professional Development","VP Membership - VP Volunteering",["bertrand","oubilitek"],"bobkone@gmail.com",45977,46387,"kone"],
+[45,"PMICC-5416341","KOUEKEM Claude Bernard",["Assistant du Chef de Projet de la Conférence Annuelle 2026"],"ALL",null,["winnie","yemele","musi"],"ckouekem@gmail.com",46090,46380,"kouekem"],
+[46,"PMICC-8394758","KOUM BAPPA Gaël Emmanuel",["Point Focal Douala 2026","Responsable du Recrutement et de la Croissance des Membres"],"ALL, VP Membership","Tous",["noella","bertrand"],"koumbappa@gmail.com",45894,46387,"koum"],
+[47,"PMICC-12255965","LAMCMA Joseph",["Chargé (e) de la Reconnaissance des Volontaires"],"VP Volunteering",null,["winnie","makuissu"],"josephlamcma566@gmail.com",46027,46387,"lamcma"],
+[48,"PMICC-7539532","MAFFO KENNE Sylvain",["WhatsApp & Community Channel Manager"],"VP Communication",null,["yemele"],"Kenne.sylvain@gmail.com",45894,46387,"maffo"],
+[49,"PMICC-8356504","MAFOTSING NDE Christelle",["Assistant Point Focal Douala 2026"],"ALL","Tous",["koum"],"mafotsingnde@gmail.com",46018,46387,"mafotsing"],
+[50,"PMICC-7470455","MAKUISSU CAYO Monique Razany",["Responsable de la Reconnaissance des Volontaires"],"VP Volunteering",null,["winnie","lamcma"],"moniquecayo@yahoo.fr",46040,46387,"makuissu"],
+[51,"PMICC-12006512","MANGA Rolin",["Targeting & Outreach Coordinator"],"VP Membership",null,["bertrand"],"rolin.manga74@gmail.com",45959,46387,"manga"],
+[52,"PMICC-11526028","MASSENE Noelle Orli",["Communication Design Manager"],"VP Communication",null,["yemele"],"masseneorli25@gmail.com",45887,46387,"massene"],
+[53,"PMICC-10209084","MAWO OBAKER Peter",["Head of PMI Cameroon Delegation at PMI Global Summit Series Africa 2026"],"ALL","Tous",["noella","bertrand","oubilitek"],"Mawopeterobaker@gmail.com",46083,46376,"mawo"],
+[54,"PMICC-12388304","MBALLA MBIDA Eric",["Auditeur interne"],"VP Finance",null,["amenguele"],"ericmbida87@gmail.com",46098,46752,"mballa"],
+[55,"PMICC-11968320","MBANG Marthe Christelle",["Responsable de l'intégration et de l'accueil des membres"],"VP Membership",null,["bertrand"],"marthechristellembang@gmail.com",45925,46387,"mbang"],
+[56,"PMICC-7462195","MBIME EBELLE François Hermann",["Mentoring Managers"],"VP Professional Development","VP Membership - VP Volunteering",["oubilitek","bertrand"],"francoismbime@yahoo.fr",45870,46387,"mbime"],
+[57,"PMICC-6650519","MBOMBO NKOUOTEN Linda Pamela",["Registration & Operations Support Officer – PMI Yaoundé Branch"],"Branche Yaoundé",null,["djongang","winnie"],"lindapamelambombo@gmail.com",46113,46387,"mbombo"],
+[58,"PMICC-12391750","MBONANGA Thierry Marcel",["Associate Marketing Management"],"VP Marketing & Public Relations",null,["ebongo"],"thierry.mbonanga@gmail.com",46083,46387,"mbonanga"],
+[59,"PMICC-9757061","MENGUE Francine Arlette",["Responsable Compliance"],"VP Administration, Governance & Ethics",null,["dorine"],"francinearl.mengue@gmail.com",46068,46446,"mengue"],
+[60,"PMICC-9523558","MENGUE MENGUE Thomas Freddy",["Assistant du Chef de Projet de la Conférence Annuelle 2026"],"ALL","Tous",["winnie","amenguele","musi"],"menguethomas@gmail.com",46090,46380,"menguet"],
+[61,"PMICC-11019745","MENGUE OBAMA Thérèse Virginie",["Mentor pour Développement professionnel et Accélération des Certifications"],"VP Professional Development","VP Membership - VP Volunteering",["oubilitek"],"virginieob50@gmail.com",45977,46387,"menguev"],
+[62,"PMICC-8138603","MODO LEVO Engelbert",["Academic Outreach Manager (Yaounde)","Assistant Programme & Participants au 2ème Teambuilding PMICC"],"VP Professional Development, VP Volunteering",null,["oubilitek","winnie"],"engelbertm32@gmail.com",46054,46387,"modo"],
+[63,"PMICC-5161787","MOFOR George",["Academic Outreach Manager (Buea)"],"VP Professional Development",null,["oubilitek"],"mofor_george@yahoo.com",46054,46387,"mofor"],
+[64,"PMICC-11674373","MOUANJO EYEI Guillaume",["Conseiller fiscal"],"VP Finance",null,["amenguele"],"muanjowillem@gmail.com",46148,46752,"mouanjo"],
+[65,"PMICC-8163445","MOUTNGUI François-Xavier",["Academic Outreach Manager (Yaounde)"],"VP Professional Development",null,["oubilitek"],"fx.moutngui@gmail.com",46054,46387,"moutngui"],
+[66,"PMICC-9861981","MUSI GISELA LUM",["Chef de Projet de la Conférence Annuelle 2026"],"ALL","Tous",["noella","bertrand","menguet"],"musi.gisela@gmail.com",46083,46380,"musi"],
+[67,"PMICC-12254344","NDJIA EBODE Franck Boris",["Chargé(e) du Recrutement et Engagement des Volontaires"],"VP Volunteering",null,["winnie"],"franckborisndjiaebode@gmail.com",46027,46387,"ndjia"],
+[68,"PMICC-8105389","NDOPING NDEMPING TENNY WILLIAMS",["Assistant Point Focal Yaounde 2026"],"ALL","Tous",["djongang"],"ndoping_williams@hotmail.com",46018,46387,"ndoping"],
+[69,"PMICC-11921939","NEMBOT Wilfried",["Content & Editorial Support"],"VP Communication",null,["yemele"],"wilfriednembot819@gmail.com",45894,46387,"nembot"],
+[70,"PMICC-11835743","NGAMBE Isaac Ricardo",["Chargé (e) de la Reconnaissance des Volontaires","Targeting & Outreach Coordinator"],"VP Volunteering, VP Membership",null,["winnie","bertrand","makuissu"],"ngambeisaacricardo@gmail.com",45959,46387,"ngambe"],
+[71,"PMICC-12302010","NGARHOD Deo-gracias",["Academic Outreach Manager (Douala)"],"VP Professional Development",null,["oubilitek"],"deograciasngar@gmail.com",46161,46387,"ngarhod"],
+[72,"PMICC-12176145","NGO DIGLEN Edwige Madeleine",["Responsable du budget"],"VP Finance",null,["amenguele"],"edwigediglen111@gmail.com",46083,46752,"ngo"],
+[73,"PMICC-11956324","NGO LAM Pauline Chikita",["Communication Officer for Yaounde Branch"],"Branche Yaoundé",null,["djongang"],"chikitalam26m@gmail.com",46157,46387,"ngolam"],
+[74,"PMICC-10071740","NGOCK Stephanie",["Assistant du Chef de Projet de la Conférence Annuelle 2026"],"ALL","Tous",["bertrand","amenguele","musi"],"stephanie.yebga@gmail.com",46090,46380,"ngock"],
+[75,"PMICC-6591751","NGUEUKOA NETSA Jean Marc",["Responsable du Recrutement et Engagement des Volontaires"],"VP Volunteering",null,["winnie","amougou"],"jeanmarc.ngueukoanetsa@gmail.com",46027,46387,"ngueukoa"],
+[76,"PMICC-11545270","NJINGANG GODWILL",["Graphic Designer"],"VP Communication",null,["yemele"],"njinganggodwill19@gmail.com",45792,46387,"njingang"],
+[77,"PMICC-10041704","NOMO KOUMAHAN BOMOLY PELAGIE",["Mentor pour Développement professionnel et Accélération des Certifications"],"VP Professional Development","VP Membership - VP Volunteering",["oubilitek","bertrand"],"bomolypelagie@gmail.com",45977,46387,"nomo"],
+[78,"PMICC-8307196","NONO NGANSOP Ulrich Vaneck",["Adjoint au Responsable du Pôle Administration"],"VP Administration, Governance & Ethics",null,["dorine","deudgui"],"nonovaneck@gmail.com",46078,46446,"nono"],
+[79,"PMICC-11971444","NTAGHA Benjamin",["Communication Design Manager"],"VP Communication",null,["yemele"],"ntaghabenjamin454@gmail.com",45910,46387,"ntagha"],
+[80,"PMICC-8062897","OMGBA ALIMA Aurélie Jacky",["Analytics & reporting officer"],"VP Membership",null,["bertrand"],"aurelieomgba2018@gmail.com",45931,46387,"omgba"],
+[81,"PMICC-10879781","OUM NDJENG Eric",["Responsable Adjoint du PMO (Vice-Chair du Comité PMO)"],"VP Administration, Governance & Ethics",null,["dorine","fouelefack"],"erhykk@gmail.com",46150,46446,"oum"],
+[82,"PMICC-12167712","OUOKAM Audrey",["Responsable Formation et Développement des Volontaires"],"VP Volunteering",null,["winnie"],"audreyloli584@gmail.com",46152,46387,"ouokam"],
+[83,"PMICC-11546737","SADJO LEGBANE Sarai",["Graphic Designer"],"VP Communication",null,["yemele"],"sadjosarai@gmail.com",45792,46387,"sadjo"],
+[84,"PMICC-12376561","SAMBA Timothée",["Responsable Informatique (IT Manager)"],"ALL","Tous",["noella","bertrand"],"Verleysamba99@gmail.com",46104,46387,"samba"],
+[85,"PMICC-12023598","SOPPI Sorelle",["Mentorship Onboarding Liaison"],"VP Membership",null,["bertrand"],"sorellesoppi@gmail.com",45925,46387,"soppi"],
+[86,"PMICC-10401254","TAIRA DJAOBE Denis",["Academic Outreach Manager (Douala)"],"VP Professional Development",null,["oubilitek"],"tairadenis8@gmail.com",46161,46387,"taira"],
+[87,"PMICC-8422468","TAKAM Alain Barthélémy",["Member Touchpoint Coordinator"],"VP Membership",null,["bertrand"],"alainbarth92@gmail.com",45925,46387,"takam"],
+[88,"PMICC-11755920","TCHOUANTE André Dimitri",["Chargé (e) de la Reconnaissance des Volontaires"],"VP Volunteering",null,["winnie","makuissu"],"tchouantedimitri26@gmail.com",46027,46387,"tchouante"],
+[89,"PMICC-10484017","TCHOUATANG TCHAKOUTE Franky Damien",["Responsable des Données et Insights"],"VP Membership",null,["bertrand"],"damien26tcha@gmail.com",45894,46387,"tchouatang"],
+[90,"PMICC-10044793","TCHOUKEU DJEUMEN Jasmin",["Coordinateur Volunteer Skills Lab 2026"],"VP Volunteering","VP Professional Development",["winnie"],"tchoukeu26@yahoo.com",46010,46387,"tchoukeu"],
+[91,"PMICC-9898383","TEITSA NGUENDON Joseph",["Mentoring Managers"],"VP Professional Development","VP Membership - VP Volunteering",["oubilitek"],"teitsanjoseph@yahoo.fr",45870,46387,"teitsa"],
+[92,"PMICC-11958930","TOUKAM Sonia",["Session host & orientation facilitator"],"VP Membership",null,["bertrand"],"sonia.toukam@ucac-icam.com",45925,46387,"toukam"],
+[93,"PMICC-12353988","TOUTCHET NGAJOU Melissa",["Trésorier"],"VP Finance",null,["amenguele"],"lissatoutchet@gmail.com",46083,46752,"toutchet"],
+[94,"PMICC-8181286","TSUANYO David Blaise",["Corporate Outreach Manager (Yaounde)"],"VP Professional Development",null,["oubilitek"],"david.tsuanyo@gmail.com",45866,46387,"tsuanyo"],
+[95,"PMICC-12399271","WAFFO TAYO Ange Emery",["Associate Marketing Management"],"VP Marketing & Public Relations",null,["ebongo"],"waffoange98@gmail.com",46083,46387,"waffo"],
+[96,"PMICC-12357540","YANOU Roland",["Responsable du Pôle Gouvernance et Stratégie"],"VP Administration, Governance & Ethics",null,["dorine"],"ynrsoft@yahoo.fr",46081,46446,"yanou"],
+[97,"PMICC-11473387","ZANGUE DONGMO Duval Junior",["Associate Public Relationships"],"VP Marketing & Public Relations",null,["ebongo"],"duvalode@gmail.com",46083,46387,"zangue"]
+];
+
+/* External evaluators */
+const EX = [
+  {name:"Winnie ZAMBO",username:"winnie",dept:"VP Volunteering",role:"Vice-Présidente Volunteering"},
+  {name:"YEMELE Jean Martin",username:"yemele",dept:"VP Communication",role:"Vice-Président Communication"},
+  {name:"Bertrand NDOPING",username:"bertrand",dept:"VP Membership",role:"Vice-Président Membership"},
+  {name:"Noella TETKA",username:"noella",dept:"Direction",role:"Présidente / Directrice Générale"},
+  {name:"OUBILITEK Vanessa",username:"oubilitek",dept:"VP Professional Development",role:"Vice-Présidente Professional Development"},
+  {name:"EKWE Dorine",username:"dorine",dept:"VP Administration, Governance & Ethics",role:"VP Administration, Governance & Ethics"},
+  {name:"AMENGUELE Cyriel",username:"amenguele",dept:"VP Finance",role:"Vice-Président Finance"}
+];
+
+const ADMIN_CREDS = {username:"adminpmic", password:"pm1c01*"};
+
+/* ===== BUILD USER MAP ===== */
+function buildUsers() {
+  const U = {};
+  V.forEach(function(v) {
+    var u = v[10];
+    U[u] = {
+      type:'volunteer', vid:v[0], pmiId:v[1], name:v[2],
+      roles:v[3], dept:v[4], deptAssoc:v[5], evaluators:v[6],
+      email:v[7], startDate:v[8], endDate:v[9],
+      username:u, password:u+'01*', evalTargets:[]
+    };
+  });
+  EX.forEach(function(e) {
+    U[e.username] = {
+      type:'external', name:e.name, dept:e.dept, role:e.role,
+      username:e.username, password:e.username+'01*', evalTargets:[]
+    };
+  });
+  V.forEach(function(v) {
+    v[6].forEach(function(eu) {
+      if (U[eu]) U[eu].evalTargets.push(v[0]);
+    });
+  });
+  return U;
+}
+const USERS = buildUsers();
+
+function getVol(id) { return V.find(function(v){return v[0]===id;})||null; }
+
+/* ===== APP STATE ===== */
+var CU = null, curTab = 0, curStep = 0, curTargetId = null, formMode = 'auto', scores = {};
+
+/* ===== UTILS ===== */
+function xl2date(s) {
+  var d = new Date(Date.UTC(1899,11,30) + s*86400000);
+  return d.toLocaleDateString('fr-FR',{month:'short',year:'numeric'});
+}
+function initials(n) { return n.split(' ').slice(0,2).map(function(w){return w[0];}).join('').toUpperCase(); }
+function sv(k,v) { try{localStorage.setItem('pmic26_'+k,JSON.stringify(v));}catch(e){} }
+function ld(k) { try{var v=localStorage.getItem('pmic26_'+k);return v?JSON.parse(v):null;}catch(e){return null;} }
+function rm(k) { try{localStorage.removeItem('pmic26_'+k);}catch(e){} }
+function showPage(id) { document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');}); document.getElementById(id).classList.add('active'); }
+function ge(id) { return document.getElementById(id); }
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+/* ===== CRITERIA (function, not const — avoids undefined 'mode' bug) ===== */
+function getCriteria(m) {
+  return [
+    {key:'objectifs',   label:"Atteinte des objectifs du rôle"},
+    {key:'livrables',   label:"Qualité des livrables"},
+    {key:'delais',      label:"Respect des délais"},
+    {key:'contribution',label:"Contribution à l'équipe"},
+    {key:'initiative',  label: m==='auto' ? "Initiative" : "Prise d'initiatives"}
+  ];
+}
+var BEHAV = [
+  {key:'equipe',        label:"Travail en équipe"},
+  {key:'communication', label:"Communication"},
+  {key:'adaptabilite',  label:"Adaptabilité"},
+  {key:'difficultes_c', label:"Gestion des difficultés"},
+  {key:'attitude',      label:"Attitude professionnelle"}
+];
+
+/* ===== AUTH ===== */
+function doLogin() {
+  var u = ge('l-user').value.trim().toLowerCase();
+  var p = ge('l-pw').value.trim();
+  ge('lerr').style.display = 'none';
+  if (u === ADMIN_CREDS.username && p === ADMIN_CREDS.password) {
+    CU = {type:'admin', name:'Administrateur', username:'adminpmic'};
+    loadAdmin(); showPage('page-admin'); return;
+  }
+  var usr = USERS[u];
+  if (!usr || p !== usr.password) { ge('lerr').style.display = 'block'; return; }
+  CU = usr;
+  loadDash();
+  showPage('page-dash');
+}
+function logout() { CU=null; curTab=0; curStep=0; curTargetId=null; ge('l-user').value=''; ge('l-pw').value=''; showPage('page-login'); }
+function backToDash() { loadDash(); showPage('page-dash'); }
+
+/* ===== DASHBOARD ===== */
+function loadDash() {
+  ge('hav').textContent = initials(CU.name);
+  ge('hname').textContent = CU.name.split(' ')[0];
+  renderProfile();
+  var hasDraftA = !!ld('draftA_'+CU.username);
+  var hasDraftO = (CU.evalTargets||[]).some(function(id){return !!ld('draftO_'+CU.username+'_'+id);});
+  var db = ge('draft-banner');
+  if (hasDraftA||hasDraftO) { db.classList.add('vis'); db.style.display='flex'; }
+  else { db.classList.remove('vis'); db.style.display='none'; }
+  renderTabs();
+  switchTab(0);
+}
+
+function renderProfile() {
+  var u = CU, isV = u.type==='volunteer';
+  var doneA = ld('doneA_'+u.username);
+  var period = isV ? xl2date(u.startDate)+' → '+xl2date(u.endDate) : '—';
+  ge('profile-card').innerHTML = '<div class="pcard">'
+    +'<div class="pwelc">Bienvenue,</div>'
+    +'<div class="pname">'+esc(u.name)+'</div>'
+    +'<div class="pmeta">'
+    +'<span class="pbadge oc">'+(isV?'Volontaire':'Évaluateur(trice)')+'</span>'
+    +'<span class="pbadge cc">'+esc(u.dept||'Direction')+'</span>'
+    +(doneA?'<span class="pbadge gn">✅ Auto-éval soumise</span>':'')
+    +'</div>'
+    +'<div class="pigrid">'
+    +(isV?'<div class="piitem"><div class="pilabel">ID PMI</div><div class="pivalue">'+esc(u.pmiId)+'</div></div>':'')
+    +'<div class="piitem"><div class="pilabel">Rôle</div><div class="pivalue">'+esc(isV?u.roles.join(', '):(u.role||u.dept))+'</div></div>'
+    +'<div class="piitem"><div class="pilabel">Département</div><div class="pivalue">'+esc(u.dept||'—')+'</div></div>'
+    +(u.deptAssoc?'<div class="piitem"><div class="pilabel">Dept. Associé</div><div class="pivalue">'+esc(u.deptAssoc)+'</div></div>':'')
+    +(isV?'<div class="piitem"><div class="pilabel">Période évaluée</div><div class="pivalue">'+period+'</div></div>':'')
+    +(isV&&u.email?'<div class="piitem"><div class="pilabel">Email</div><div class="pivalue">'+esc(u.email)+'</div></div>':'')
+    +'</div></div>';
+}
+
+function renderTabs() {
+  var hasA = CU.type==='volunteer', hasO = (CU.evalTargets||[]).length>0;
+  ge('dash-tabs').innerHTML = (hasA&&hasO)
+    ? '<div class="tabs">'
+      +'<button class="tbtn'+(curTab===0?' active':'')+'" onclick="switchTab(0)">📝 Mon Auto-évaluation</button>'
+      +'<button class="tbtn'+(curTab===1?' active':'')+'" onclick="switchTab(1)">👥 Évaluer un Collègue</button>'
+      +'</div>' : '';
+}
+
+function switchTab(n) {
+  curTab = n; renderTabs();
+  var hasA = CU.type==='volunteer', hasO = (CU.evalTargets||[]).length>0;
+  var cont = ge('dash-content');
+  if (n===0 && hasA) renderAutoSec(cont);
+  else if ((n===1&&hasO)||(hasO&&!hasA)) renderOthersSec(cont);
+  else if (hasA&&!hasO) renderAutoSec(cont);
+  else cont.innerHTML='<div class="card"><p style="color:var(--li)">Aucune évaluation assignée.</p></div>';
+}
+
+/* ===== AUTO-EVAL SECTION ===== */
+function renderAutoSec(cont) {
+  var done = ld('doneA_'+CU.username);
+  if (done) {
+    cont.innerHTML = '<div class="card"><div class="card-hd"><div class="cion ig">✅</div><div><div class="ctitle">Auto-évaluation soumise</div><div class="csub">Merci pour votre participation !</div></div></div>'
+      +'<div class="alert as">Votre auto-évaluation a été soumise le <strong>'+done+'</strong>.</div></div>';
+    return;
+  }
+  cont.innerHTML = '<div class="card"><div class="card-hd"><div class="cion io">📝</div><div><div class="ctitle">Mon Auto-évaluation</div><div class="csub">Formulaire en 5 étapes — sauvegardez à tout moment</div></div></div>'
+    +'<div class="alert ai">ℹ️ Notez chaque critère de 1 à 5. Cliquez <strong>Sauvegarder</strong> pour reprendre plus tard.</div>'
+    +'<div id="afc"></div></div>';
+  formMode = 'auto'; curStep = 0; curTargetId = null; scores = {};
+  buildSteps('afc','auto');
+}
+
+/* ===== OTHERS SECTION ===== */
+function renderOthersSec(cont) {
+  var targets = CU.evalTargets||[];
+  var done = targets.filter(function(id){return !!ld('doneO_'+CU.username+'_'+id);}).length;
+  var opts = targets.map(function(id){
+    var v=getVol(id); if(!v)return'';
+    var isDone = !!ld('doneO_'+CU.username+'_'+id);
+    return '<option value="'+id+'">'+esc(v[2])+(isDone?' ✅':'')+'</option>';
+  }).join('');
+  cont.innerHTML = '<div class="card"><div class="card-hd"><div class="cion ip">👥</div><div><div class="ctitle">Évaluer un Collègue</div><div class="csub">'+targets.length+' personne(s) à évaluer — '+done+'/'+targets.length+' complétée(s)</div></div></div>'
+    +'<div class="fg" style="margin-bottom:1rem"><label>Sélectionner le volontaire à évaluer</label>'
+    +'<select class="edrop" id="osel" onchange="onOSel()"><option value="">— Choisir un nom —</option>'+opts+'</select></div>'
+    +'<div id="ofc"></div></div>';
+}
+
+function onOSel() {
+  var id = parseInt(ge('osel').value);
+  if (!id) { ge('ofc').innerHTML=''; return; }
+  curTargetId = id;
+  var done = ld('doneO_'+CU.username+'_'+id);
+  if (done) {
+    var v=getVol(id);
+    ge('ofc').innerHTML='<div class="alert as">✅ Vous avez déjà évalué <strong>'+esc(v?v[2]:'')+'</strong> (soumis le '+done+').</div>';
+    return;
+  }
+  formMode='others'; curStep=0; scores={};
+  buildSteps('ofc','others');
+}
+
+/* ===== STEP BUILDER ===== */
+var STEP_LABELS = ['Infos Générales','Évaluation des Rôles','Compétences','Score & Appréciation','Développement'];
+
+function buildSteps(contId, mode) {
+  var cont = ge(contId); if(!cont) return;
+  var dk = draftKey(mode);
+  var draft = ld(dk)||{};
+  if (draft.step!==undefined) curStep=draft.step;
+  cont.innerHTML = '<div class="snav" id="'+mode+'-nav">'+buildNavHTML()+'</div>'
+    +'<div id="'+mode+'-sec"></div>'
+    +'<div class="fnav">'
+    +'<div style="display:flex;gap:8px">'
+    +(curStep>0?'<button class="btn btn-gh" onclick="prevStep(\''+mode+'\')">← Précédent</button>':'')
+    +'<button class="btn btn-gh btn-sm" id="save-btn-'+mode+'" onclick="saveDraft(\''+mode+'\',this)">💾 Sauvegarder</button>'
+    +'</div>'
+    +'<div>'
+    +(curStep<4
+      ? '<button class="btn btn-pr" onclick="nextStep(\''+mode+'\')">Suivant →</button>'
+      : '<button class="btn btn-su" id="'+mode+'-sbtn" onclick="submitForm(\''+mode+'\')">Soumettre ✓</button>')
+    +'</div></div>';
+  renderSec(mode);
+  updateNav(mode);
+}
+
+function buildNavHTML() {
+  return STEP_LABELS.map(function(s,i){
+    var cls = i<curStep?'done':i===curStep?'active':'';
+    return '<div class="sitem">'
+      +'<div class="sbub '+cls+'">'+(i<curStep?'✓':i+1)+'</div>'
+      +'<div class="slabel">'+s+'</div>'
+      +(i<STEP_LABELS.length-1?'<div class="sline '+(i<curStep?'done':'')+'"></div>':'')
+      +'</div>';
+  }).join('');
+}
+
+function updateNav(mode) {
+  var el=ge(mode+'-nav'); if(el) el.innerHTML=buildNavHTML();
+}
+
+function draftKey(mode) {
+  return mode==='auto' ? 'draftA_'+CU.username : 'draftO_'+CU.username+'_'+curTargetId;
+}
+
+function renderSec(mode) {
+  var cont=ge(mode+'-sec'); if(!cont) return;
+  var draft=ld(draftKey(mode))||{};
+  if(curStep===0) cont.innerHTML=renderS0(mode);
+  else if(curStep===1) cont.innerHTML=renderS1(mode,draft);
+  else if(curStep===2) cont.innerHTML=renderS2(mode,draft);
+  else if(curStep===3) cont.innerHTML=renderS3(mode,draft);
+  else cont.innerHTML=renderS4(mode,draft);
+  // Restore stars
+  var ratings=draft.ratings||{};
+  Object.keys(ratings).forEach(function(k){ if(ratings[k]>0) setStarUI(k,ratings[k]); });
+  // Restore appreciation
+  if(draft.appreciation){ document.querySelectorAll('.apbtn').forEach(function(b){if(b.dataset.val===draft.appreciation)b.classList.add('sel');}); }
+  // Restore checkboxes
+  var chkList=(mode==='auto'?draft.interets:draft.recommandations)||[];
+  chkList.forEach(function(v){ document.querySelectorAll('.cbitem').forEach(function(el){if(el.dataset.val===v){el.classList.add('chk');var f=el.querySelector('.cbfake');if(f)f.textContent='✓';}}); });
+  computeScore(mode);
+}
+
+/* ===== STEP 0: General Info ===== */
+function renderS0(mode) {
+  if(mode==='auto'){
+    var u=CU;
+    return '<div style="margin-bottom:1.2rem"><div style="font-size:.95rem;font-weight:700;margin-bottom:4px">Informations Générales</div>'
+      +'<div style="font-size:.78rem;color:var(--li)">Ces informations sont pré-remplies depuis votre profil.</div></div>'
+      +'<div class="pigrid" style="margin-bottom:1rem">'
+      +'<div class="piitem" style="background:var(--gr)"><div class="pilabel">Nom complet</div><div class="pivalue">'+esc(u.name)+'</div></div>'
+      +'<div class="piitem" style="background:var(--gr)"><div class="pilabel">ID PMI</div><div class="pivalue">'+esc(u.pmiId)+'</div></div>'
+      +'<div class="piitem" style="background:var(--gr)"><div class="pilabel">Rôle(s)</div><div class="pivalue">'+esc(u.roles.join(' · '))+'</div></div>'
+      +'<div class="piitem" style="background:var(--gr)"><div class="pilabel">Superviseur(s)</div><div class="pivalue">'+esc(u.evaluators.map(function(e){return USERS[e]?USERS[e].name:e;}).join(', '))+'</div></div>'
+      +'<div class="piitem" style="background:var(--gr)"><div class="pilabel">Période</div><div class="pivalue">'+xl2date(u.startDate)+' → '+xl2date(u.endDate)+'</div></div>'
+      +'<div class="piitem" style="background:var(--gr)"><div class="pilabel">Date</div><div class="pivalue">'+new Date().toLocaleDateString('fr-FR')+'</div></div>'
+      +'</div><div class="alert ai">ℹ️ Évaluez votre propre performance honnêtement. Vos réponses sont confidentielles jusqu\'à la réunion du comité.</div>';
+  } else {
+    var v=getVol(curTargetId); if(!v) return '<p>Erreur</p>';
+    return '<div style="margin-bottom:1.2rem"><div style="font-size:.95rem;font-weight:700;margin-bottom:4px">Informations Générales</div>'
+      +'<div style="font-size:.78rem;color:var(--li)">Évaluation par pair.</div></div>'
+      +'<div class="pigrid" style="margin-bottom:1rem">'
+      +'<div class="piitem" style="background:#f0ebff"><div class="pilabel">Vous évaluez</div><div class="pivalue" style="color:var(--pu)">'+esc(v[2])+'</div></div>'
+      +'<div class="piitem" style="background:var(--gr)"><div class="pilabel">ID PMI</div><div class="pivalue">'+esc(v[1])+'</div></div>'
+      +'<div class="piitem" style="background:var(--gr)"><div class="pilabel">Rôle(s)</div><div class="pivalue">'+esc(v[3].join(' · '))+'</div></div>'
+      +'<div class="piitem" style="background:var(--gr)"><div class="pilabel">Période</div><div class="pivalue">'+xl2date(v[8])+' → '+xl2date(v[9])+'</div></div>'
+      +'<div class="piitem" style="background:#fff3ee"><div class="pilabel">Évaluateur(trice)</div><div class="pivalue" style="color:var(--or)">'+esc(CU.name)+'</div></div>'
+      +'<div class="piitem" style="background:var(--gr)"><div class="pilabel">Fonction</div><div class="pivalue">'+esc(CU.role||CU.dept)+'</div></div>'
+      +'</div><div class="alert ai">ℹ️ Évaluez objectivement les performances de <strong>'+esc(v[2])+'</strong> sur des faits observables.</div>';
+  }
+}
+
+/* ===== STEP 1: Role Evaluation ===== */
+function renderS1(mode,draft) {
+  var roles = mode==='auto' ? CU.roles : (getVol(curTargetId)||{3:[]})[3]||[];
+  return '<div style="margin-bottom:1.1rem"><div style="font-size:.95rem;font-weight:700;margin-bottom:4px">Évaluation par Rôle</div>'
+    +'<div style="font-size:.78rem;color:var(--li)">Notez chaque critère de 1 (insuffisant) à 5 (excellent).</div></div>'
+    +roles.map(function(r,i){return renderRoleBlock(mode,i+1,r,draft);}).join('');
+}
+
+function renderRoleBlock(mode,idx,rName,draft) {
+  var p='r'+idx, crit=getCriteria(mode);
+  return '<div class="rsec">'
+    +'<div class="rsec-title"><span class="rb">'+idx+'</span>'+esc(rName)+'</div>'
+    +'<div class="rgrid">'+crit.map(function(c){return ratingRow(p+'_'+c.key,c.label,draft);}).join('')+'</div>'
+    +'<div style="margin-top:.9rem">'
+    +'<div class="fg"><label>Principales réalisations dans ce rôle</label>'
+    +'<textarea id="'+p+'_realisations" style="width:100%;padding:8px;border:1.5px solid #e0e0e0;border-radius:6px;font-family:inherit;font-size:.82rem;min-height:65px">'+esc(draft[p+'_realisations']||'')+'</textarea></div>'
+    +'<div class="fg"><label>Difficultés rencontrées</label>'
+    +'<textarea id="'+p+'_difficultes" style="width:100%;padding:8px;border:1.5px solid #e0e0e0;border-radius:6px;font-family:inherit;font-size:.82rem;min-height:65px">'+esc(draft[p+'_difficultes']||'')+'</textarea></div>'
+    +'<div style="background:var(--gr);border-radius:8px;padding:9px;font-size:.82rem;font-weight:600">Sous-total Rôle '+idx+' : <span id="'+p+'_sub" style="color:var(--or);font-size:1.05rem">0</span>/25</div>'
+    +'</div></div>';
+}
+
+function ratingRow(id,label,draft) {
+  var val=(draft&&draft.ratings&&draft.ratings[id])||0;
+  return '<div class="rrow">'
+    +'<div><div class="rlabel">'+esc(label)+'</div></div>'
+    +'<div style="display:flex;align-items:center;gap:6px">'
+    +'<div id="'+id+'_stars" class="star-row">'
+    +[1,2,3,4,5].map(function(n){
+      return '<button class="sbtn'+(n<=val?' on':'')+'" data-id="'+id+'" data-val="'+n+'" onclick="setStar(\''+id+'\','+n+')" title="'+n+'/5">★</button>';
+    }).join('')
+    +'</div><div class="rnote" id="'+id+'_note">'+(val?val+'/5':'—')+'</div></div>'
+    +'<div class="jrow"><input type="text" id="'+id+'_just" placeholder="Justification / exemples (optionnel)" value="'+esc(draft&&draft.rjust&&draft.rjust[id]||'')+'"></div>'
+    +'</div>';
+}
+
+function setStar(id, val) {
+  setStarUI(id, val);
+  if(!scores.ratings) scores.ratings={};
+  scores.ratings[id]=val;
+  computeScore(formMode);
+}
+function setStarUI(id, val) {
+  document.querySelectorAll('[data-id="'+id+'"]').forEach(function(s){
+    s.classList.toggle('on', parseInt(s.dataset.val)<=val);
+  });
+  var n=ge(id+'_note'); if(n) n.textContent=val+'/5';
+}
+
+/* ===== STEP 2: Behavioral ===== */
+function renderS2(mode,draft) {
+  return '<div style="margin-bottom:1.1rem"><div style="font-size:.95rem;font-weight:700;margin-bottom:4px">Compétences Comportementales</div>'
+    +'<div style="font-size:.78rem;color:var(--li)">Évaluez les compétences transversales — notez de 1 à 5.</div></div>'
+    +'<div class="rsec"><div class="rgrid">'
+    +BEHAV.map(function(b){return ratingRow('c_'+b.key,b.label,draft);}).join('')
+    +'</div><div style="background:var(--gr);border-radius:8px;padding:9px;font-size:.82rem;font-weight:600;margin-top:.9rem">Sous-total comportemental : <span id="c_sub" style="color:var(--or);font-size:1.05rem">0</span>/25</div></div>';
+}
+
+/* ===== STEP 3: Score & Appreciation ===== */
+function renderS3(mode,draft) {
+  var APPRS=[
+    {e:'🌟',l:'Excellence'},{e:'😊',l:'Très satisfaisant'},{e:'👍',l:'Satisfaisant'},
+    {e:'⚠️',l:'À renforcer'},{e:'❗',l:'Insuffisant'}
+  ];
+  return '<div style="margin-bottom:1.1rem"><div style="font-size:.95rem;font-weight:700;margin-bottom:4px">Score Global & Appréciation</div>'
+    +'<div style="font-size:.78rem;color:var(--li)">Score calculé automatiquement à partir de vos évaluations.</div></div>'
+    +'<div class="sbox"><div class="slbl">Score Total</div><div class="snum" id="tot-score">0</div>'
+    +'<div class="slbl" id="tot-denom">/50</div>'
+    +'<div class="sbk"><div class="sbki"><div class="sbkin" id="role-d">0/25</div><div class="sbkl">Rôle(s)</div></div>'
+    +'<div class="sbki"><div class="sbkin" id="behav-d">0/25</div><div class="sbkl">Comportement</div></div>'
+    +'<div class="sbki"><div class="sbkin" id="avg-d">0/5</div><div class="sbkl">Moyenne</div></div></div></div>'
+    +'<div style="font-size:.9rem;font-weight:700;margin-bottom:.7rem">Appréciation Générale</div>'
+    +'<div class="apgrid">'
+    +APPRS.map(function(a){return '<button class="apbtn'+(draft.appreciation===a.l?' sel':'')+'" data-val="'+a.l+'" onclick="setApprec(this,\''+a.l+'\')"><span class="apemoji">'+a.e+'</span>'+a.l+'</button>';}).join('')
+    +'</div>';
+}
+function setApprec(btn,val) {
+  document.querySelectorAll('.apbtn').forEach(function(b){b.classList.remove('sel');});
+  btn.classList.add('sel');
+}
+
+/* ===== STEP 4: Development ===== */
+function renderS4(mode,draft) {
+  var isA=mode==='auto';
+  return '<div style="margin-bottom:1.1rem"><div style="font-size:.95rem;font-weight:700;margin-bottom:4px">'+(isA?'Développement & Perspectives':'Recommandations & Perspectives')+'</div></div>'
+    +'<div class="rsec">'
+    +'<div class="fg"><label>Points forts majeurs</label><textarea id="d_forts" style="width:100%;padding:8px;border:1.5px solid #e0e0e0;border-radius:6px;font-family:inherit;font-size:.82rem;min-height:75px">'+esc(draft.d_forts||'')+'</textarea></div>'
+    +'<div class="fg"><label>Axes d\'amélioration prioritaires</label><textarea id="d_axes" style="width:100%;padding:8px;border:1.5px solid #e0e0e0;border-radius:6px;font-family:inherit;font-size:.82rem;min-height:75px">'+esc(draft.d_axes||'')+'</textarea></div>'
+    +'<div class="fg"><label>Compétences à développer</label><textarea id="d_comp" style="width:100%;padding:8px;border:1.5px solid #e0e0e0;border-radius:6px;font-family:inherit;font-size:.82rem;min-height:65px">'+esc(draft.d_comp||'')+'</textarea></div>'
+    +(isA
+      ? '<div class="fg"><label>Intérêts pour la suite</label><div class="cbgrp">'
+        +['Renouvellement de l\'expérience du volontariat','Responsabilités plus stratégiques','Autres certifications PMI'].map(function(o){
+          var chk=(draft.interets||[]).includes(o);
+          return '<div class="cbitem'+(chk?' chk':'')+'" data-val="'+esc(o)+'" onclick="toggleCb(this)"><div class="cbfake">'+(chk?'✓':'')+'</div><span style="font-size:.82rem">'+esc(o)+'</span></div>';
+        }).join('')
+        +'</div></div>'
+      : '<div class="fg"><label>Commentaire synthétique</label><textarea id="d_comm" style="width:100%;padding:8px;border:1.5px solid #e0e0e0;border-radius:6px;font-family:inherit;font-size:.82rem;min-height:75px">'+esc(draft.d_comm||'')+'</textarea></div>'
+        +'<div class="fg"><label>Recommandations du comité</label><div class="cbgrp">'
+        +['Renouvellement recommandé','Renouvellement avec plan d\'amélioration','Non-renouvellement recommandé','Recommandation pour responsabilités supérieures'].map(function(o){
+          var chk=(draft.recommandations||[]).includes(o);
+          return '<div class="cbitem'+(chk?' chk':'')+'" data-val="'+esc(o)+'" onclick="toggleCb(this)"><div class="cbfake">'+(chk?'✓':'')+'</div><span style="font-size:.82rem">'+esc(o)+'</span></div>';
+        }).join('')
+        +'</div></div>')
+    +'</div>';
+}
+
+function toggleCb(el) {
+  el.classList.toggle('chk');
+  var f=el.querySelector('.cbfake');
+  if(f) f.textContent=el.classList.contains('chk')?'✓':'';
+}
+
+/* ===== SCORE COMPUTATION ===== */
+function computeScore(mode) {
+  var roles = mode==='auto' ? CU.roles : ((getVol(curTargetId)||{3:[]})[3]||[]);
+  var crit = getCriteria(mode);
+  var roleTot=0, maxRole=0;
+  roles.forEach(function(r,i){
+    var p='r'+(i+1), sub=0;
+    crit.forEach(function(c){
+      var val=0;
+      document.querySelectorAll('[data-id="'+p+'_'+c.key+'"]').forEach(function(s){if(s.classList.contains('on'))val=parseInt(s.dataset.val)||0;});
+      sub+=val;
+    });
+    roleTot+=sub; maxRole+=25;
+    var el=ge(p+'_sub'); if(el) el.textContent=sub;
+  });
+  var behTot=0;
+  BEHAV.forEach(function(b){
+    var val=0;
+    document.querySelectorAll('[data-id="c_'+b.key+'"]').forEach(function(s){if(s.classList.contains('on'))val=parseInt(s.dataset.val)||0;});
+    behTot+=val;
+  });
+  var sub=ge('c_sub'); if(sub) sub.textContent=behTot;
+  var total=roleTot+behTot, maxT=maxRole+25;
+  var avg=maxT>0?(total/maxT*5).toFixed(1):0;
+  var ts=ge('tot-score'); if(ts) ts.textContent=total;
+  var td=ge('tot-denom'); if(td) td.textContent='/'+maxT;
+  var rd=ge('role-d'); if(rd) rd.textContent=roleTot+'/'+maxRole;
+  var bd=ge('behav-d'); if(bd) bd.textContent=behTot+'/25';
+  var ad=ge('avg-d'); if(ad) ad.textContent=avg+'/5';
+  scores.computed={roleTot:roleTot,behTot:behTot,total:total,maxTotal:maxT,avg:avg};
+}
+
+/* ===== NAVIGATION ===== */
+function nextStep(mode) { gather(mode); if(curStep<4){curStep++;buildSteps(mode==='auto'?'afc':'ofc',mode);} }
+function prevStep(mode) { gather(mode); if(curStep>0){curStep--;buildSteps(mode==='auto'?'afc':'ofc',mode);} }
+
+function gather(mode) {
+  var dk=draftKey(mode), draft=ld(dk)||{};
+  draft.step=curStep;
+  if(!draft.ratings) draft.ratings={};
+  if(!draft.rjust) draft.rjust={};
+  document.querySelectorAll('.sbtn.on').forEach(function(b){draft.ratings[b.dataset.id]=parseInt(b.dataset.val);});
+  document.querySelectorAll('[id$="_just"]').forEach(function(el){if(el.value!==undefined)draft.rjust[el.id.replace('_just','')]=el.value;});
+  ['r1_realisations','r1_difficultes','r2_realisations','r2_difficultes','d_forts','d_axes','d_comp','d_comm'].forEach(function(id){var el=ge(id);if(el)draft[id]=el.value;});
+  var apsel=document.querySelector('.apbtn.sel'); if(apsel) draft.appreciation=apsel.dataset.val;
+  var chks=[...document.querySelectorAll('.cbitem.chk')].map(function(c){return c.dataset.val;}).filter(Boolean);
+  if(chks.length){ if(mode==='auto') draft.interets=chks; else draft.recommandations=chks; }
+  if(scores.computed) draft.computed=scores.computed;
+  sv(dk,draft);
+}
+
+function saveDraft(mode, btn) {
+  gather(mode);
+  var db=ge('draft-banner'); db.classList.add('vis'); db.style.display='flex';
+  if(btn){var o=btn.textContent;btn.textContent='✓ Sauvegardé!';setTimeout(function(){btn.textContent=o;},1500);}
+}
+
+function resumeDraft() {
+  if(!!ld('draftA_'+CU.username)&&CU.type==='volunteer'){switchTab(0);}
+  else{
+    var t=(CU.evalTargets||[]).find(function(id){return !!ld('draftO_'+CU.username+'_'+id);});
+    if(t){switchTab(1);setTimeout(function(){var s=ge('osel');if(s){s.value=t;onOSel();}},150);}
+  }
+  ge('draft-banner').style.display='none'; ge('draft-banner').classList.remove('vis');
+}
+
+/* ===== SUBMIT ===== */
+async function submitForm(mode) {
+  gather(mode);
+  var dk=draftKey(mode), draft=ld(dk)||{};
+  var now=new Date(), dateStr=now.toLocaleDateString('fr-FR');
+  var payload={formType:mode,timestamp:now.toISOString(),username:CU.username};
+  if(mode==='auto'){
+    var u=CU;
+    Object.assign(payload,{pmiId:u.pmiId,fullName:u.name,roles:u.roles.join(' | '),dept:u.dept,deptAssoc:u.deptAssoc||'',
+      supervisors:u.evaluators.map(function(e){return USERS[e]?USERS[e].name:e;}).join(', '),
+      period:xl2date(u.startDate)+' → '+xl2date(u.endDate)});
+    flatDraft(payload,draft,mode,u.roles);
+  } else {
+    var v=getVol(curTargetId); if(!v) return;
+    Object.assign(payload,{evaluatorName:CU.name,evaluatorFunction:CU.role||CU.dept,
+      targetPmiId:v[1],targetFullName:v[2],targetRoles:v[3].join(' | '),
+      period:xl2date(v[8])+' → '+xl2date(v[9])});
+    flatDraft(payload,draft,mode,v[3]);
+  }
+  var sbtn=ge(mode+'-sbtn'); if(sbtn){sbtn.innerHTML='<span class="spin"></span> Envoi...';sbtn.disabled=true;}
+  try {
+    await fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify(payload),headers:{'Content-Type':'application/json'},mode:'no-cors'});
+  } catch(e){ console.warn('Fetch error:',e); }
+  if(mode==='auto'){sv('doneA_'+CU.username,dateStr);rm(dk);}
+  else{sv('doneO_'+CU.username+'_'+curTargetId,dateStr);rm(dk);}
+  var tname=mode==='auto'?CU.name.split(' ')[0]:(getVol(curTargetId)||{2:''})[2];
+  ge('ty-title').textContent='Merci, '+CU.name.split(' ')[0]+' !';
+  ge('ty-sub').textContent=mode==='auto'
+    ?'Votre auto-évaluation a été enregistrée avec succès. Elle sera examinée lors de la réunion du comité.'
+    :'Votre évaluation de '+tname+' a bien été reçue. Merci pour votre engagement envers l\'équipe PMI Cameroon !';
+  showPage('page-ty');
+}
+
+
+function flatDraft(p, draft, mode, roles) {
+  var crit = getCriteria(mode), r = draft.ratings || {}, rj = draft.rjust || {};
+  roles.forEach(function(rName, i) {
+    var prefix = 'r' + (i + 1);
+    var sub = 0;
+    crit.forEach(function(c) {
+      var key = prefix + '_' + c.key;
+      var note = r[key] || 0;
+      p[prefix + '_' + c.key + '_note'] = note;
+      p[prefix + '_' + c.key + '_just'] = rj[key] || '';
+      sub += note;
+    });
+    p[prefix + '_subtotal']      = sub;
+    p[prefix + '_realisations']  = draft[prefix + '_realisations'] || '';
+    p[prefix + '_difficultes']   = draft[prefix + '_difficultes'] || '';
+  });
+  // Behavioural
+  var behSub = 0;
+  BEHAV.forEach(function(b) {
+    var key = 'c_' + b.key;
+    var note = r[key] || 0;
+    p[key + '_note'] = note;
+    p[key + '_just'] = rj[key] || '';
+    behSub += note;
+  });
+  p['behav_subtotal'] = behSub;
+  // Totals
+  var comp = draft.computed || {};
+  p['total']       = comp.total    || 0;
+  p['maxTotal']    = comp.maxTotal || 0;
+  p['moyenne']     = comp.avg      || 0;
+  p['appreciation']= draft.appreciation || '';
+  // Development
+  p['d_points_forts']  = draft.d_forts || '';
+  p['d_axes']          = draft.d_axes  || '';
+  p['d_competences']   = draft.d_comp  || '';
+  if (mode === 'auto') {
+    p['interets'] = (draft.interets || []).join(', ');
+  } else {
+    p['recommandations']  = (draft.recommandations || []).join(', ');
+    p['d_commentaire']    = draft.d_comm || '';
+  }
+}
+
+/* ===== ADMIN DASHBOARD ===== */
+function loadAdmin() {
+  var cont = ge('admin-content');
+  cont.innerHTML = '<div class="stgrid">'
+    + '<div class="stcard or"><div class="stnum">97</div><div class="stlbl">Volontaires Total</div><div class="pbwrap"><div class="pb or" style="width:100%"></div></div></div>'
+    + '<div class="stcard pu"><div class="stnum" id="adm-auto">—</div><div class="stlbl">Auto-évaluations</div><div class="pbwrap"><div class="pb pu" id="adm-auto-pb" style="width:0%"></div></div></div>'
+    + '<div class="stcard cy"><div class="stnum" id="adm-peer">—</div><div class="stlbl">Évaluations Pairs</div><div class="pbwrap"><div class="pb" style="background:var(--cy);width:0%" id="adm-peer-pb"></div></div></div>'
+    + '<div class="stcard gn"><div class="stnum" id="adm-total">—</div><div class="stlbl">Total Soumissions</div><div class="pbwrap"><div class="pb" style="background:#27ae60;width:0%" id="adm-total-pb"></div></div></div>'
+    + '</div>'
+    + '<div class="card"><div class="card-hd"><div class="cion io">📊</div><div><div class="ctitle">Suivi des Soumissions</div><div class="csub">Données en temps réel depuis Google Sheets</div></div></div>'
+    + '<div class="alert ai">ℹ️ Chargement des données de suivi...</div>'
+    + '<div id="adm-table"></div></div>'
+    + '<div class="card"><div class="card-hd"><div class="cion ip">🔗</div><div><div class="ctitle">Accès aux Feuilles Google Sheets</div></div></div>'
+    + '<div style="display:flex;flex-wrap:wrap;gap:.7rem">'
+    + '<a href="https://docs.google.com/spreadsheets/d/147I-Mqoh4I7vbAWoULyI0KnSz_iHVJQPU59Z0nxwb-0" target="_blank" class="btn btn-se">📋 Auto-évaluations</a>'
+    + '<a href="https://docs.google.com/spreadsheets/d/1Et-XiUFJF68SgDxpkXe-sNl1SrWlalJ4e8Fd8WiMspo" target="_blank" class="btn btn-pr">👥 Évaluations des Pairs</a>'
+    + '</div></div>';
+  // Fetch tracking data
+  fetch(SCRIPT_URL + '?action=getTracking&token=PMIC2026ADMIN')
+    .then(function(r) { return r.json(); })
+    .then(function(rows) {
+      if (!rows || rows.length < 2) { ge('adm-table').innerHTML='<p style="color:var(--li);font-size:.82rem">Aucune soumission enregistrée pour l\'instant.</p>'; return; }
+      var headers = rows[0], data = rows.slice(1);
+      var autoC = data.filter(function(r){return r[3]==='auto';}).length;
+      var peerC = data.filter(function(r){return r[3]==='others';}).length;
+      var tot   = data.length;
+      if(ge('adm-auto'))    ge('adm-auto').textContent    = autoC + '/97';
+      if(ge('adm-peer'))    ge('adm-peer').textContent    = peerC;
+      if(ge('adm-total'))   ge('adm-total').textContent   = tot;
+      if(ge('adm-auto-pb')) ge('adm-auto-pb').style.width = Math.round(autoC/97*100)+'%';
+      var tbl = '<table class="dtbl"><thead><tr>'
+        + headers.map(function(h){return '<th>'+esc(String(h))+'</th>';}).join('')
+        + '</tr></thead><tbody>'
+        + data.slice().reverse().map(function(row){
+            return '<tr>'+row.map(function(c){return '<td>'+esc(String(c||''))+'</td>';}).join('')+'</tr>';
+          }).join('')
+        + '</tbody></table>';
+      ge('adm-table').innerHTML = tbl;
+    })
+    .catch(function() {
+      ge('adm-table').innerHTML='<p style="color:var(--li);font-size:.82rem">Impossible de charger les données. Vérifiez le déploiement du script.</p>';
+    });
+}
+
+/* ===== CORRECTION MODAL ===== */
+function openCorrModal() {
+  var u = CU;
+  ge('corr-current').innerHTML = '<strong>Informations actuelles :</strong><br>'
+    + 'Nom : ' + esc(u.name) + '<br>'
+    + (u.pmiId ? 'ID PMI : ' + esc(u.pmiId) + '<br>' : '')
+    + 'Rôle : ' + esc(u.roles ? u.roles.join(', ') : (u.role || '—')) + '<br>'
+    + 'Département : ' + esc(u.dept || '—');
+  ge('corr-field').value = '';
+  ge('corr-correct').value = '';
+  ge('corrModal').classList.add('open');
+}
+function closeCorrModal() { ge('corrModal').classList.remove('open'); }
+
+function sendCorrWhatsApp() {
+  var field   = ge('corr-field').value;
+  var correct = ge('corr-correct').value.trim();
+  if (!field || !correct) { alert('Veuillez remplir tous les champs.'); return; }
+  var msg = 'Correction demandée — PMI Cameroon Évaluations 2026\n'
+    + 'Utilisateur : ' + CU.username + '\n'
+    + 'Nom : ' + CU.name + '\n'
+    + 'Champ incorrect : ' + field + '\n'
+    + 'Information correcte : ' + correct;
+  var url = 'https://wa.me/237695264788?text=' + encodeURIComponent(msg);
+  window.open(url, '_blank');
+  closeCorrModal();
+}
+
+</script>
+</body>
+</html>
