@@ -173,7 +173,7 @@ footer{text-align:center;padding:2rem 1.5rem 3rem;font-size:.74rem;color:var(--l
   <div class="fg"><label>Nom d'utilisateur</label><input id="l-user" type="text" placeholder="Ex: forteh" autocomplete="username" onkeydown="if(event.key==='Enter')doLogin()"></div>
   <div class="fg"><label>Mot de passe</label><input id="l-pw" type="password" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></div>
   <button class="btn btn-se btn-lg" style="width:100%;justify-content:center;margin-top:.5rem" onclick="doLogin()">Se connecter →</button>
-  <p style="text-align:center;margin-top:1.4rem;font-size:.72rem;color:var(--li)">© PMI Cameroon · Concept &amp; Design : Innocent Forteh</p>
+  <p style="text-align:center;margin-top:1.4rem;font-size:.72rem;color:var(--li)">© PMI Cameroon · Concept &amp; Design : Innocent Forteh &nbsp;·&nbsp; <a href="mailto:forteh@gmail.com" style="color:var(--or);text-decoration:none">forteh@gmail.com</a></p>
 </div>
 </div>
 
@@ -202,7 +202,7 @@ footer{text-align:center;padding:2rem 1.5rem 3rem;font-size:.74rem;color:var(--l
   <div id="dash-tabs"></div>
   <div id="dash-content"></div>
 </div>
-<footer>© PMI Cameroon &nbsp;·&nbsp; <strong>Concept &amp; Design : Innocent Forteh</strong></footer>
+<footer>© PMI Cameroon &nbsp;·&nbsp; <strong>Concept &amp; Design : Innocent Forteh</strong> &nbsp;·&nbsp; <a href="mailto:forteh@gmail.com" style="color:var(--or);text-decoration:none">forteh@gmail.com</a></footer>
 </div>
 
 <!-- ADMIN -->
@@ -218,7 +218,7 @@ footer{text-align:center;padding:2rem 1.5rem 3rem;font-size:.74rem;color:var(--l
   </div>
 </header>
 <div class="mc" id="admin-content"></div>
-<footer>© PMI Cameroon &nbsp;·&nbsp; <strong>Concept &amp; Design : Innocent Forteh</strong></footer>
+<footer>© PMI Cameroon &nbsp;·&nbsp; <strong>Concept &amp; Design : Innocent Forteh</strong> &nbsp;·&nbsp; <a href="mailto:forteh@gmail.com" style="color:var(--or);text-decoration:none">forteh@gmail.com</a></footer>
 </div>
 
 <!-- THANK YOU -->
@@ -229,7 +229,7 @@ footer{text-align:center;padding:2rem 1.5rem 3rem;font-size:.74rem;color:var(--l
   <div class="tysb" id="ty-sub">Votre évaluation a été soumise avec succès.</div>
   <button class="btn btn-se btn-lg" onclick="backToDash()" style="margin-bottom:.9rem;width:100%;justify-content:center">← Retour au tableau de bord</button>
   <button class="btn btn-gh" onclick="logout()" style="width:100%;justify-content:center">🚪 Déconnexion</button>
-  <p style="margin-top:2rem;font-size:.72rem;color:var(--li)">© PMI Cameroon · Concept &amp; Design : Innocent Forteh</p>
+  <p style="margin-top:2rem;font-size:.72rem;color:var(--li)">© PMI Cameroon · Concept &amp; Design : Innocent Forteh &nbsp;·&nbsp; <a href="mailto:forteh@gmail.com" style="color:var(--or);text-decoration:none">forteh@gmail.com</a></p>
 </div></div>
 </div>
 
@@ -255,6 +255,18 @@ footer{text-align:center;padding:2rem 1.5rem 3rem;font-size:.74rem;color:var(--l
   <button class="btn btn-wa" style="width:100%;justify-content:center" onclick="sendCorrWhatsApp()">📱 Envoyer via WhatsApp (+237 695264788)</button>
 </div>
 </div>
+
+<!-- ADMIN MODAL -->
+<div class="moverlay" id="admin-modal">
+<div class="modal" style="max-width:600px">
+  <div class="mhd">
+    <div class="ctitle">Administration PMI Cameroon</div>
+    <button class="mclose" onclick="closeAdminModal()">×</button>
+  </div>
+  <div id="admin-modal-body"></div>
+</div>
+</div>
+
 
 <script>
 /* ===== CONFIGURATION ===== */
@@ -642,7 +654,7 @@ function renderS0(mode) {
       +'<div class="piitem" style="background:var(--gr)"><div class="pilabel">Nom complet</div><div class="pivalue">'+esc(u.name)+'</div></div>'
       +'<div class="piitem" style="background:var(--gr)"><div class="pilabel">ID PMI</div><div class="pivalue">'+esc(u.pmiId)+'</div></div>'
       +'<div class="piitem" style="background:var(--gr)"><div class="pilabel">Rôle(s)</div><div class="pivalue">'+esc(u.roles.join(' · '))+'</div></div>'
-      +'<div class="piitem" style="background:var(--gr)"><div class="pilabel">Superviseur(s)</div><div class="pivalue">'+esc(u.evaluators.map(function(e){return USERS[e]?USERS[e].name:e;}).join(', '))+'</div></div>'
+      +'<div class="piitem" style="background:var(--gr)"><div class="pilabel">Évaluateur(s)</div><div class="pivalue">'+esc(u.evaluators.map(function(e){return USERS[e]?USERS[e].name:e;}).join(', '))+'</div></div>'
       +'<div class="piitem" style="background:var(--gr)"><div class="pilabel">Période</div><div class="pivalue">'+xl2date(u.startDate)+' → '+xl2date(u.endDate)+'</div></div>'
       +'<div class="piitem" style="background:var(--gr)"><div class="pilabel">Date</div><div class="pivalue">'+new Date().toLocaleDateString('fr-FR')+'</div></div>'
       +'</div><div class="alert ai">ℹ️ Évaluez votre propre performance honnêtement. Vos réponses sont confidentielles jusqu\'à la réunion du comité.</div>';
@@ -720,27 +732,63 @@ function renderS2(mode,draft) {
 }
 
 /* ===== STEP 3: Score & Appreciation ===== */
+// Appreciation intervals: 1–<1.5 Insuffisant | 1.5–<2.5 À renforcer | 2.5–<3.5 Satisfaisant | 3.5–<4.5 Très satisfaisant | 4.5–5 Excellent
+var APPRS = [
+  {e:'⭐',l:'Insuffisant',   min:1,   max:1.5,  col:'#e74c3c'},
+  {e:'⚠️',l:'À renforcer',  min:1.5, max:2.5,  col:'#e67e22'},
+  {e:'👍',l:'Satisfaisant',  min:2.5, max:3.5,  col:'#f39c12'},
+  {e:'😊',l:'Très satisfaisant',min:3.5,max:4.5,col:'#27ae60'},
+  {e:'🌟',l:'Excellent',     min:4.5, max:5.01, col:'#8e44ad'}
+];
+function getApprecFromAvg(avg) {
+  var a = parseFloat(avg)||0;
+  for(var i=0;i<APPRS.length;i++){if(a>=APPRS[i].min&&a<APPRS[i].max)return APPRS[i].l;}
+  return a>=5?'Excellent':'—';
+}
 function renderS3(mode,draft) {
-  var APPRS=[
-    {e:'🌟',l:'Excellence'},{e:'😊',l:'Très satisfaisant'},{e:'👍',l:'Satisfaisant'},
-    {e:'⚠️',l:'À renforcer'},{e:'❗',l:'Insuffisant'}
-  ];
+  // Compute scores from draft directly (DOM stars may not exist on this step)
+  var comp = draft.computed || scores.computed || {};
+  var total = comp.total || 0;
+  var maxT  = comp.maxTotal || 50;
+  var roleTot = comp.roleTot || 0;
+  var behTot  = comp.behTot  || 0;
+  var maxRole = maxT - 25;
+  var avg = comp.avg || (maxT>0?(total/maxT*5).toFixed(1):'0.0');
+  // Auto-determine appreciation from avg
+  var autoApprec = getApprecFromAvg(avg);
+  var appreciation = draft.appreciation || autoApprec;
+  var appColor = (APPRS.find(function(a){return a.l===appreciation;})||{col:'var(--or)'}).col;
   return '<div style="margin-bottom:1.1rem"><div style="font-size:.95rem;font-weight:700;margin-bottom:4px">Score Global & Appréciation</div>'
-    +'<div style="font-size:.78rem;color:var(--li)">Score calculé automatiquement à partir de vos évaluations.</div></div>'
-    +'<div class="sbox"><div class="slbl">Score Total</div><div class="snum" id="tot-score">0</div>'
-    +'<div class="slbl" id="tot-denom">/50</div>'
-    +'<div class="sbk"><div class="sbki"><div class="sbkin" id="role-d">0/25</div><div class="sbkl">Rôle(s)</div></div>'
-    +'<div class="sbki"><div class="sbkin" id="behav-d">0/25</div><div class="sbkl">Comportement</div></div>'
-    +'<div class="sbki"><div class="sbkin" id="avg-d">0/5</div><div class="sbkl">Moyenne</div></div></div></div>'
-    +'<div style="font-size:.9rem;font-weight:700;margin-bottom:.7rem">Appréciation Générale</div>'
+    +'<div style="font-size:.78rem;color:var(--li)">Score calculé automatiquement. L\'appréciation est présélectionnée selon votre moyenne.</div></div>'
+    +'<div class="sbox" id="sbox-main" style="background:linear-gradient(135deg,'+appColor+','+appColor+'cc)">'
+    +'<div class="slbl">Score Total</div><div class="snum" id="tot-score">'+total+'</div>'
+    +'<div class="slbl" id="tot-denom">/'+maxT+'</div>'
+    +'<div class="sbk">'
+    +'<div class="sbki"><div class="sbkin" id="role-d">'+roleTot+'/'+maxRole+'</div><div class="sbkl">Rôle(s)</div></div>'
+    +'<div class="sbki"><div class="sbkin" id="behav-d">'+behTot+'/25</div><div class="sbkl">Comportement</div></div>'
+    +'<div class="sbki"><div class="sbkin" id="avg-d">'+avg+'/5</div><div class="sbkl">Moyenne</div></div>'
+    +'</div></div>'
+    +'<div style="font-size:.9rem;font-weight:700;margin:.9rem 0 .5rem">Appréciation Générale <span style="font-size:.72rem;color:var(--li);font-weight:400">(auto-sélectionnée — modifiable)</span></div>'
     +'<div class="apgrid">'
-    +APPRS.map(function(a){return '<button class="apbtn'+(draft.appreciation===a.l?' sel':'')+'" data-val="'+a.l+'" onclick="setApprec(this,\''+a.l+'\')"><span class="apemoji">'+a.e+'</span>'+a.l+'</button>';}).join('')
-    +'</div>';
+    +APPRS.map(function(a){
+      var sel = appreciation===a.l;
+      return '<button class="apbtn'+(sel?' sel':'')+'" data-val="'+a.l+'" data-col="'+a.col+'" onclick="setApprec(this,\''+a.l+'\')" style="'+(sel?'border-color:'+a.col+';background:'+a.col+';color:#fff':'')+'"><span class="apemoji">'+a.e+'</span>'+a.l+'</button>';
+    }).join('')
+    +'</div>'
+    +'<div id="apprec-desc" style="margin-top:.6rem;padding:9px 13px;background:var(--gr);border-radius:8px;font-size:.79rem;color:var(--me);min-height:30px">'+getApprecDesc(appreciation)+'</div>';
+}
+function getApprecDesc(l){
+  var d={'Insuffisant':'Moyenne 1 – <1.5 · Des lacunes importantes nécessitant un suivi immédiat.','À renforcer':'Moyenne 1.5 – <2.5 · Des efforts sont nécessaires pour atteindre le niveau attendu.','Satisfaisant':'Moyenne 2.5 – <3.5 · Performance correcte, objectifs globalement atteints.','Très satisfaisant':'Moyenne 3.5 – <4.5 · Performance solide, dépasse régulièrement les attentes.','Excellent':'Moyenne 4.5 – 5 · Performance exceptionnelle, modèle à suivre.'};
+  return d[l]||'';
 }
 function setApprec(btn,val) {
-  document.querySelectorAll('.apbtn').forEach(function(b){b.classList.remove('sel');});
+  document.querySelectorAll('.apbtn').forEach(function(b){b.classList.remove('sel');b.style.borderColor='';b.style.background='';b.style.color='';});
   btn.classList.add('sel');
+  btn.style.borderColor=btn.dataset.col;btn.style.background=btn.dataset.col;btn.style.color='#fff';
+  var desc=ge('apprec-desc');if(desc)desc.textContent=getApprecDesc(val);
+  var sbox=ge('sbox-main');if(sbox)sbox.style.background='linear-gradient(135deg,'+btn.dataset.col+','+btn.dataset.col+'cc)';
 }
+
 
 /* ===== STEP 4: Development ===== */
 function renderS4(mode,draft) {
@@ -752,17 +800,21 @@ function renderS4(mode,draft) {
     +'<div class="fg"><label>Compétences à développer</label><textarea id="d_comp" style="width:100%;padding:8px;border:1.5px solid #e0e0e0;border-radius:6px;font-family:inherit;font-size:.82rem;min-height:65px">'+esc(draft.d_comp||'')+'</textarea></div>'
     +(isA
       ? '<div class="fg"><label>Intérêts pour la suite</label><div class="cbgrp">'
-        +['Renouvellement de l\'expérience du volontariat','Responsabilités plus stratégiques','Autres certifications PMI'].map(function(o){
+        +['Renouvellement de l\'expérience du volontariat','Responsabilités plus stratégiques','Autres certifications PMI','Autre'].map(function(o){
           var chk=(draft.interets||[]).includes(o);
           return '<div class="cbitem'+(chk?' chk':'')+'" data-val="'+esc(o)+'" onclick="toggleCb(this)"><div class="cbfake">'+(chk?'✓':'')+'</div><span style="font-size:.82rem">'+esc(o)+'</span></div>';
         }).join('')
+        +'</div>'
+        +'<div id="autre-detail-auto" style="display:none;margin-top:.5rem"><input type="text" id="autre_interets" placeholder="Précisez votre proposition..." style="width:100%;padding:8px;border:1.5px solid var(--pu);border-radius:6px;font-size:.82rem;font-family:inherit"></div>'
         +'</div></div>'
       : '<div class="fg"><label>Commentaire synthétique</label><textarea id="d_comm" style="width:100%;padding:8px;border:1.5px solid #e0e0e0;border-radius:6px;font-family:inherit;font-size:.82rem;min-height:75px">'+esc(draft.d_comm||'')+'</textarea></div>'
         +'<div class="fg"><label>Recommandations du comité</label><div class="cbgrp">'
-        +['Renouvellement recommandé','Renouvellement avec plan d\'amélioration','Non-renouvellement recommandé','Recommandation pour responsabilités supérieures'].map(function(o){
+        +['Renouvellement recommandé','Renouvellement avec plan d\'amélioration','Non-renouvellement recommandé','Recommandation pour responsabilités supérieures','Autre'].map(function(o){
           var chk=(draft.recommandations||[]).includes(o);
           return '<div class="cbitem'+(chk?' chk':'')+'" data-val="'+esc(o)+'" onclick="toggleCb(this)"><div class="cbfake">'+(chk?'✓':'')+'</div><span style="font-size:.82rem">'+esc(o)+'</span></div>';
         }).join('')
+        +'</div>'
+        +'<div id="autre-detail-peer" style="display:none;margin-top:.5rem"><input type="text" id="autre_recomm" placeholder="Précisez votre recommandation..." style="width:100%;padding:8px;border:1.5px solid var(--pu);border-radius:6px;font-size:.82rem;font-family:inherit"></div>'
         +'</div></div>')
     +'</div>';
 }
@@ -771,6 +823,13 @@ function toggleCb(el) {
   el.classList.toggle('chk');
   var f=el.querySelector('.cbfake');
   if(f) f.textContent=el.classList.contains('chk')?'✓':'';
+  // Show/hide "Autre" text field
+  if(el.dataset.val==='Autre'){
+    var detA=ge('autre-detail-auto'), detP=ge('autre-detail-peer');
+    var show=el.classList.contains('chk');
+    if(detA) detA.style.display=show?'block':'none';
+    if(detP) detP.style.display=show?'block':'none';
+  }
 }
 
 /* ===== SCORE COMPUTATION ===== */
@@ -819,6 +878,12 @@ function gather(mode) {
   ['r1_realisations','r1_difficultes','r2_realisations','r2_difficultes','d_forts','d_axes','d_comp','d_comm'].forEach(function(id){var el=ge(id);if(el)draft[id]=el.value;});
   var apsel=document.querySelector('.apbtn.sel'); if(apsel) draft.appreciation=apsel.dataset.val;
   var chks=[...document.querySelectorAll('.cbitem.chk')].map(function(c){return c.dataset.val;}).filter(Boolean);
+  // Append "Autre" free text if present
+  var autreAutoEl=ge('autre_interets'), autrePeerEl=ge('autre_recomm');
+  if(chks.includes('Autre')){
+    if(mode==='auto'&&autreAutoEl&&autreAutoEl.value.trim()){var idx=chks.indexOf('Autre');chks[idx]='Autre: '+autreAutoEl.value.trim();}
+    if(mode==='others'&&autrePeerEl&&autrePeerEl.value.trim()){var idx=chks.indexOf('Autre');chks[idx]='Autre: '+autrePeerEl.value.trim();}
+  }
   if(chks.length){ if(mode==='auto') draft.interets=chks; else draft.recommandations=chks; }
   if(scores.computed) draft.computed=scores.computed;
   sv(dk,draft);
@@ -918,48 +983,349 @@ function flatDraft(p, draft, mode, roles) {
 }
 
 /* ===== ADMIN DASHBOARD ===== */
+
+/* ---------- Admin state ---------- */
+var adminData = { volunteers: null, externals: null }; // live editable copies
+
 function loadAdmin() {
+  adminData.volunteers = JSON.parse(JSON.stringify(V));   // deep copy
+  adminData.externals  = JSON.parse(JSON.stringify(EX));
+  renderAdminPage();
+}
+
+function renderAdminPage() {
   var cont = ge('admin-content');
-  cont.innerHTML = '<div class="stgrid">'
-    + '<div class="stcard or"><div class="stnum">97</div><div class="stlbl">Volontaires Total</div><div class="pbwrap"><div class="pb or" style="width:100%"></div></div></div>'
-    + '<div class="stcard pu"><div class="stnum" id="adm-auto">—</div><div class="stlbl">Auto-évaluations</div><div class="pbwrap"><div class="pb pu" id="adm-auto-pb" style="width:0%"></div></div></div>'
-    + '<div class="stcard cy"><div class="stnum" id="adm-peer">—</div><div class="stlbl">Évaluations Pairs</div><div class="pbwrap"><div class="pb" style="background:var(--cy);width:0%" id="adm-peer-pb"></div></div></div>'
-    + '<div class="stcard gn"><div class="stnum" id="adm-total">—</div><div class="stlbl">Total Soumissions</div><div class="pbwrap"><div class="pb" style="background:#27ae60;width:0%" id="adm-total-pb"></div></div></div>'
-    + '</div>'
-    + '<div class="card"><div class="card-hd"><div class="cion io">📊</div><div><div class="ctitle">Suivi des Soumissions</div><div class="csub">Données en temps réel depuis Google Sheets</div></div></div>'
-    + '<div class="alert ai">ℹ️ Chargement des données de suivi...</div>'
-    + '<div id="adm-table"></div></div>'
-    + '<div class="card"><div class="card-hd"><div class="cion ip">🔗</div><div><div class="ctitle">Accès aux Feuilles Google Sheets</div></div></div>'
-    + '<div style="display:flex;flex-wrap:wrap;gap:.7rem">'
-    + '<a href="https://docs.google.com/spreadsheets/d/147I-Mqoh4I7vbAWoULyI0KnSz_iHVJQPU59Z0nxwb-0" target="_blank" class="btn btn-se">📋 Auto-évaluations</a>'
-    + '<a href="https://docs.google.com/spreadsheets/d/1Et-XiUFJF68SgDxpkXe-sNl1SrWlalJ4e8Fd8WiMspo" target="_blank" class="btn btn-pr">👥 Évaluations des Pairs</a>'
-    + '</div></div>';
-  // Fetch tracking data
+  cont.innerHTML =
+    '<div class="stgrid">'
+    +'<div class="stcard or"><div class="stnum" id="adm-vol">'+adminData.volunteers.length+'</div><div class="stlbl">Volontaires</div><div class="pbwrap"><div class="pb or" style="width:100%"></div></div></div>'
+    +'<div class="stcard pu"><div class="stnum" id="adm-auto">—</div><div class="stlbl">Auto-évaluations</div><div class="pbwrap"><div class="pb pu" id="adm-auto-pb" style="width:0%"></div></div></div>'
+    +'<div class="stcard cy"><div class="stnum" id="adm-peer">—</div><div class="stlbl">Éval. Pairs</div><div class="pbwrap"><div class="pb" style="background:var(--cy);width:0%" id="adm-peer-pb"></div></div></div>'
+    +'<div class="stcard gn"><div class="stnum" id="adm-total">—</div><div class="stlbl">Total Soumis</div><div class="pbwrap"><div class="pb" style="background:#27ae60;width:0%"></div></div></div>'
+    +'</div>'
+    +'<div class="tabs" style="margin-bottom:1.2rem">'
+    +'<button class="tbtn active" id="atab-0" onclick="adminTab(0)">📋 Volontaires</button>'
+    +'<button class="tbtn" id="atab-1" onclick="adminTab(1)">👤 Évaluateurs</button>'
+    +'<button class="tbtn" id="atab-2" onclick="adminTab(2)">📊 Soumissions</button>'
+    +'<button class="tbtn" id="atab-3" onclick="adminTab(3)">📄 Rapport PDF</button>'
+    +'</div>'
+    +'<div id="admin-tab-content"></div>'
+    +'<div class="card"><div class="card-hd"><div class="cion ip">🔗</div><div><div class="ctitle">Accès Google Sheets</div></div></div>'
+    +'<div style="display:flex;flex-wrap:wrap;gap:.7rem">'
+    +'<a href="https://docs.google.com/spreadsheets/d/147I-Mqoh4I7vbAWoULyI0KnSz_iHVJQPU59Z0nxwb-0" target="_blank" class="btn btn-se">📋 Auto-évaluations</a>'
+    +'<a href="https://docs.google.com/spreadsheets/d/1Et-XiUFJF68SgDxpkXe-sNl1SrWlalJ4e8Fd8WiMspo" target="_blank" class="btn btn-pr">👥 Évaluations Pairs</a>'
+    +'</div></div>';
+
+  adminTab(0);
+  fetchAdminStats();
+}
+
+var _curAdminTab = 0;
+function adminTab(n) {
+  _curAdminTab = n;
+  [0,1,2,3].forEach(function(i){
+    var b=ge('atab-'+i);
+    if(b) b.classList.toggle('active', i===n);
+  });
+  var cont = ge('admin-tab-content');
+  if(n===0) renderVolunteerTab(cont);
+  else if(n===1) renderEvaluatorTab(cont);
+  else if(n===2) renderSubmissionsTab(cont);
+  else renderReportTab(cont);
+}
+
+/* ── Volunteer management tab ── */
+function renderVolunteerTab(cont) {
+  var rows = adminData.volunteers.map(function(v,i){
+    var evals = (v[6]||[]).join(', ');
+    return '<tr>'
+      +'<td>'+esc(v[1])+'</td>'
+      +'<td style="font-weight:600">'+esc(v[2])+'</td>'
+      +'<td>'+esc((v[3]||[]).join(', '))+'</td>'
+      +'<td>'+esc(v[4]||'')+'</td>'
+      +'<td><span style="font-size:.75rem;color:var(--me)">'+esc(evals)+'</span></td>'
+      +'<td style="white-space:nowrap">'
+      +'<button class="btn btn-gh btn-sm" style="margin-right:4px" onclick="editVolunteer('+v[0]+')">✏️</button>'
+      +'<button class="btn btn-sm" style="background:#fee;color:#c0392b;border:1px solid #fcc" onclick="deleteVolunteer('+v[0]+')">🗑</button>'
+      +'</td></tr>';
+  }).join('');
+  cont.innerHTML = '<div class="card">'
+    +'<div class="card-hd"><div class="cion io">📋</div><div><div class="ctitle">Gestion des Volontaires</div><div class="csub">'+adminData.volunteers.length+' volontaires</div></div>'
+    +'<button class="btn btn-su btn-sm" style="margin-left:auto" onclick="addVolunteer()">+ Ajouter</button></div>'
+    +'<table class="dtbl"><thead><tr><th>ID PMI</th><th>Nom</th><th>Rôle(s)</th><th>Département</th><th>Évaluateurs</th><th>Actions</th></tr></thead>'
+    +'<tbody>'+rows+'</tbody></table></div>';
+}
+
+/* ── Evaluator management tab ── */
+function renderEvaluatorTab(cont) {
+  var rows = adminData.externals.map(function(e){
+    var assigned = adminData.volunteers.filter(function(v){return (v[6]||[]).includes(e.username);}).length;
+    return '<tr>'
+      +'<td style="font-weight:600">'+esc(e.name)+'</td>'
+      +'<td>'+esc(e.username)+'</td>'
+      +'<td>'+esc(e.role||'')+'</td>'
+      +'<td>'+esc(e.dept||'')+'</td>'
+      +'<td><span class="sbadge sd">'+assigned+' volontaire(s)</span></td>'
+      +'<td style="white-space:nowrap">'
+      +'<button class="btn btn-gh btn-sm" style="margin-right:4px" onclick="editEvaluator(\''+e.username+'\')" >✏️</button>'
+      +'<button class="btn btn-sm" style="background:#fee;color:#c0392b;border:1px solid #fcc" onclick="deleteEvaluator(\''+e.username+'\')">🗑</button>'
+      +'</td></tr>';
+  }).join('');
+  cont.innerHTML = '<div class="card">'
+    +'<div class="card-hd"><div class="cion ip">👤</div><div><div class="ctitle">Gestion des Évaluateurs</div><div class="csub">'+adminData.externals.length+' évaluateurs externes</div></div>'
+    +'<button class="btn btn-su btn-sm" style="margin-left:auto" onclick="addEvaluator()">+ Ajouter</button></div>'
+    +'<table class="dtbl"><thead><tr><th>Nom</th><th>Username</th><th>Rôle</th><th>Département</th><th>Assignations</th><th>Actions</th></tr></thead>'
+    +'<tbody>'+rows+'</tbody></table></div>';
+}
+
+/* ── Submissions tab ── */
+function renderSubmissionsTab(cont) {
+  cont.innerHTML = '<div class="card"><div class="card-hd"><div class="cion io">📊</div><div><div class="ctitle">Suivi des Soumissions</div></div>'
+    +'<button class="btn btn-cy btn-sm" style="margin-left:auto" onclick="fetchAdminStats()">🔄 Actualiser</button></div>'
+    +'<div class="alert ai" id="sub-loading">ℹ️ Chargement...</div>'
+    +'<div id="adm-table"></div></div>';
+  fetchAdminStats();
+}
+
+function fetchAdminStats() {
   fetch(SCRIPT_URL + '?action=getTracking&token=PMIC2026ADMIN', {redirect:'follow'})
-    .then(function(r) { return r.json(); })
-    .then(function(rows) {
-      if (!rows || rows.length < 2) { ge('adm-table').innerHTML='<p style="color:var(--li);font-size:.82rem">Aucune soumission enregistrée pour l\'instant.</p>'; return; }
-      var headers = rows[0], data = rows.slice(1);
-      var autoC = data.filter(function(r){return r[3]==='auto';}).length;
-      var peerC = data.filter(function(r){return r[3]==='others';}).length;
-      var tot   = data.length;
-      if(ge('adm-auto'))    ge('adm-auto').textContent    = autoC + '/97';
-      if(ge('adm-peer'))    ge('adm-peer').textContent    = peerC;
-      if(ge('adm-total'))   ge('adm-total').textContent   = tot;
-      if(ge('adm-auto-pb')) ge('adm-auto-pb').style.width = Math.round(autoC/97*100)+'%';
-      var tbl = '<table class="dtbl"><thead><tr>'
-        + headers.map(function(h){return '<th>'+esc(String(h))+'</th>';}).join('')
-        + '</tr></thead><tbody>'
-        + data.slice().reverse().map(function(row){
-            return '<tr>'+row.map(function(c){return '<td>'+esc(String(c||''))+'</td>';}).join('')+'</tr>';
-          }).join('')
-        + '</tbody></table>';
-      ge('adm-table').innerHTML = tbl;
+    .then(function(r){return r.json();})
+    .then(function(rows){
+      var totalVol = adminData.volunteers.length;
+      if(!rows||rows.length<2){
+        var lo=ge('sub-loading');if(lo)lo.textContent='Aucune soumission : aucun formulaire soumis pour l\'instant.';
+        if(ge('adm-auto'))ge('adm-auto').textContent='0/'+totalVol;
+        return;
+      }
+      var data=rows.slice(1);
+      var autoC=data.filter(function(r){return r[3]==='auto';}).length;
+      var peerC=data.filter(function(r){return r[3]==='others';}).length;
+      var tot=data.length;
+      if(ge('adm-auto'))ge('adm-auto').textContent=autoC+'/'+totalVol;
+      if(ge('adm-peer'))ge('adm-peer').textContent=peerC;
+      if(ge('adm-total'))ge('adm-total').textContent=tot;
+      if(ge('adm-auto-pb'))ge('adm-auto-pb').style.width=Math.round(autoC/totalVol*100)+'%';
+      var lo=ge('sub-loading');if(lo)lo.style.display='none';
+      var tbl='<table class="dtbl"><thead><tr>'+rows[0].map(function(h){return '<th>'+esc(String(h))+'</th>';}).join('')+'</tr></thead><tbody>'
+        +data.slice().reverse().map(function(row){return '<tr>'+row.map(function(cc){return '<td>'+esc(String(cc||''))+'</td>';}).join('')+'</tr>';}).join('')
+        +'</tbody></table>';
+      if(ge('adm-table'))ge('adm-table').innerHTML=tbl;
     })
-    .catch(function() {
-      ge('adm-table').innerHTML='<p style="color:var(--li);font-size:.82rem">Impossible de charger les données. Vérifiez le déploiement du script.</p>';
+    .catch(function(){
+      var lo=ge('sub-loading');if(lo)lo.textContent='Impossible de charger. Vérifiez le déploiement.';
     });
 }
+
+/* ── PDF Report tab ── */
+function renderReportTab(cont) {
+  var opts = adminData.volunteers.map(function(v){
+    return '<option value="'+v[0]+'">'+esc(v[2])+' — '+esc(v[1])+'</option>';
+  }).join('');
+  cont.innerHTML = '<div class="card"><div class="card-hd"><div class="cion ig">📄</div><div><div class="ctitle">Rapport d\'Évaluation PDF</div><div class="csub">Générer un rapport consolidé pour chaque volontaire</div></div></div>'
+    +'<div class="fg"><label>Sélectionner un volontaire</label>'
+    +'<select class="edrop" id="rpt-sel" onchange="previewReport()"><option value="">— Choisir un volontaire —</option>'+opts+'</select></div>'
+    +'<div id="rpt-preview"></div>'
+    +'<div id="rpt-btns" style="display:none;margin-top:1rem">'
+    +'<button class="btn btn-se" onclick="printReport()" style="margin-right:.5rem">🖨️ Imprimer / Enregistrer PDF</button>'
+    +'<button class="btn btn-gh" onclick="ge(\'rpt-preview\').innerHTML=\'\';ge(\'rpt-btns\').style.display=\'none\'">✕ Fermer</button>'
+    +'</div></div>';
+}
+
+function previewReport() {
+  var id = parseInt(ge('rpt-sel').value);
+  var prev = ge('rpt-preview'), btns = ge('rpt-btns');
+  if(!id){prev.innerHTML='';btns.style.display='none';return;}
+  var v = adminData.volunteers.find(function(x){return x[0]===id;});
+  if(!v){prev.innerHTML='<p style="color:red">Volontaire introuvable.</p>';return;}
+  var evals = (v[6]||[]).map(function(u){
+    var ex = adminData.externals.find(function(e){return e.username===u;});
+    return ex ? ex.name+' ('+ex.role+')' : u;
+  }).join('<br>');
+  prev.innerHTML = buildReportHTML(v, evals);
+  btns.style.display='block';
+}
+
+function buildReportHTML(v, evalsHtml) {
+  var now = new Date().toLocaleDateString('fr-FR',{year:'numeric',month:'long',day:'numeric'});
+  var startD = xl2date(v[8]), endD = xl2date(v[9]);
+  var roles = (v[3]||[]).map(function(r,i){return '<li>'+esc(r)+'</li>';}).join('');
+  return '<div id="report-body" style="border:2px solid #e0e0e0;border-radius:12px;padding:0;overflow:hidden;margin-top:1rem;background:#fff">'
+    +'<div style="background:linear-gradient(135deg,#5B2DB8,#8B1A6B);color:#fff;padding:2rem 2.5rem">'
+    +'<div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.2rem">'
+    +'<div style="width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,#F46B2F,#c94e18);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.2rem;color:#fff">PMI</div>'
+    +'<div><div style="font-size:1.1rem;font-weight:900">PMI Cameroon</div><div style="font-size:.75rem;opacity:.8">Rapport d\'Évaluation des Volontaires 2026</div></div>'
+    +'<div style="margin-left:auto;text-align:right;font-size:.72rem;opacity:.8">Généré le '+now+'</div></div>'
+    +'<div style="font-size:1.6rem;font-weight:900;margin-bottom:.3rem">'+esc(v[2])+'</div>'
+    +'<div style="font-size:.82rem;opacity:.85">'+esc(v[1])+' &nbsp;·&nbsp; Période : '+startD+' → '+endD+'</div>'
+    +'</div>'
+    +'<div style="padding:2rem 2.5rem">'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem">'
+    +'<div style="background:#f8f6ff;border-radius:9px;padding:1rem"><div style="font-size:.65rem;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:.4rem">Département</div><div style="font-weight:600;font-size:.9rem">'+esc(v[4]||'—')+'</div></div>'
+    +'<div style="background:#fff3ee;border-radius:9px;padding:1rem"><div style="font-size:.65rem;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:.4rem">Dept. Associé</div><div style="font-weight:600;font-size:.9rem">'+esc(v[5]||'—')+'</div></div>'
+    +'<div style="background:#f8f6ff;border-radius:9px;padding:1rem;grid-column:1/-1"><div style="font-size:.65rem;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:.4rem">Évaluateurs désignés</div><div style="font-weight:600;font-size:.88rem;line-height:1.6">'+evalsHtml+'</div></div>'
+    +'</div>'
+    +'<div style="margin-bottom:1.5rem"><div style="font-size:.82rem;font-weight:700;color:#5B2DB8;border-bottom:2px solid #f0f0f0;padding-bottom:.4rem;margin-bottom:.7rem">📌 Rôle(s) exercé(s)</div>'
+    +'<ul style="margin-left:1.2rem;font-size:.85rem;line-height:1.7;color:#333">'+roles+'</ul></div>'
+    +'<div style="margin-bottom:1.5rem"><div style="font-size:.82rem;font-weight:700;color:#5B2DB8;border-bottom:2px solid #f0f0f0;padding-bottom:.4rem;margin-bottom:.7rem">⭐ Grille d\'Évaluation</div>'
+    +'<table style="width:100%;border-collapse:collapse;font-size:.8rem">'
+    +'<thead><tr style="background:#f8f6ff"><th style="padding:8px;text-align:left;font-weight:700;color:#5B2DB8">Critère</th><th style="padding:8px;text-align:center;font-weight:700;color:#5B2DB8">Note /5</th><th style="padding:8px;text-align:center;font-weight:700;color:#5B2DB8">Auto-éval</th><th style="padding:8px;text-align:center;font-weight:700;color:#5B2DB8">Éval. Pairs</th></tr></thead>'
+    +'<tbody>'
+    +'<tr style="background:#fff8ee"><td colspan="4" style="padding:6px 8px;font-weight:700;font-size:.75rem;color:#F46B2F">Performance des Rôles</td></tr>'
+    +['Atteinte des objectifs','Qualité des livrables','Respect des délais','Contribution à l\'équipe','Initiative'].map(function(cr){
+      return '<tr style="border-bottom:1px solid #f5f5f5"><td style="padding:8px;color:#333">'+esc(cr)+'</td><td style="padding:8px;text-align:center;color:#888">/5</td><td style="padding:8px;text-align:center">—</td><td style="padding:8px;text-align:center">—</td></tr>';
+    }).join('')
+    +'<tr style="background:#fff8ee"><td colspan="4" style="padding:6px 8px;font-weight:700;font-size:.75rem;color:#F46B2F">Compétences Comportementales</td></tr>'
+    +['Travail en équipe','Communication','Adaptabilité','Gestion des difficultés','Attitude professionnelle'].map(function(cr){
+      return '<tr style="border-bottom:1px solid #f5f5f5"><td style="padding:8px;color:#333">'+esc(cr)+'</td><td style="padding:8px;text-align:center;color:#888">/5</td><td style="padding:8px;text-align:center">—</td><td style="padding:8px;text-align:center">—</td></tr>';
+    }).join('')
+    +'</tbody></table></div>'
+    +'<div style="background:linear-gradient(135deg,#5B2DB8,#8B1A6B);color:#fff;border-radius:12px;padding:1.4rem;text-align:center;margin-bottom:1.5rem">'
+    +'<div style="font-size:.75rem;opacity:.85;text-transform:uppercase;letter-spacing:.5px">Score Global</div>'
+    +'<div style="font-size:2.5rem;font-weight:900;line-height:1.2">— / 50</div>'
+    +'<div style="display:flex;justify-content:center;gap:2.5rem;margin-top:.8rem">'
+    +'<div style="text-align:center"><div style="font-size:1.1rem;font-weight:800">—</div><div style="font-size:.65rem;opacity:.8">Rôles</div></div>'
+    +'<div style="text-align:center"><div style="font-size:1.1rem;font-weight:800">—</div><div style="font-size:.65rem;opacity:.8">Comportement</div></div>'
+    +'<div style="text-align:center"><div style="font-size:1.1rem;font-weight:800">— / 5</div><div style="font-size:.65rem;opacity:.8">Moyenne</div></div>'
+    +'</div></div>'
+    +'<div style="margin-bottom:1.5rem"><div style="font-size:.82rem;font-weight:700;color:#5B2DB8;border-bottom:2px solid #f0f0f0;padding-bottom:.4rem;margin-bottom:.7rem">📝 Appréciation &amp; Commentaires</div>'
+    +'<table style="width:100%;border-collapse:collapse;font-size:.8rem">'
+    +'<tr><td style="padding:8px;width:40%;color:#555;font-weight:600">Appréciation générale</td><td style="padding:8px">—</td></tr>'
+    +'<tr style="background:#fafafa"><td style="padding:8px;color:#555;font-weight:600">Points forts</td><td style="padding:8px">—</td></tr>'
+    +'<tr><td style="padding:8px;color:#555;font-weight:600">Axes d\'amélioration</td><td style="padding:8px">—</td></tr>'
+    +'<tr style="background:#fafafa"><td style="padding:8px;color:#555;font-weight:600">Compétences à développer</td><td style="padding:8px">—</td></tr>'
+    +'<tr><td style="padding:8px;color:#555;font-weight:600">Suite à donner</td><td style="padding:8px">—</td></tr>'
+    +'</table></div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:2rem">'
+    +'<div style="border-top:2px solid #333;padding-top:.6rem;text-align:center;font-size:.78rem;color:#555">Signature du Volontaire<br><span style="font-style:italic">'+esc(v[2])+'</span></div>'
+    +'<div style="border-top:2px solid #333;padding-top:.6rem;text-align:center;font-size:.78rem;color:#555">Signature de l\'Évaluateur<br><span style="font-style:italic">&nbsp;</span></div>'
+    +'</div>'
+    +'<div style="margin-top:1.5rem;text-align:center;font-size:.7rem;color:#aaa;border-top:1px solid #eee;padding-top:.8rem">© PMI Cameroon · Évaluations 2026 · Concept & Design : Innocent Forteh · forteh@gmail.com</div>'
+    +'</div></div>';
+}
+
+function printReport() {
+  var body = ge('report-body');
+  if(!body){alert('Aucun rapport à imprimer.');return;}
+  var win = window.open('','_blank','width=800,height=900');
+  win.document.write('<html><head><title>Rapport PMI Cameroon</title>'
+    +'<style>body{font-family:Inter,system-ui,sans-serif;margin:2cm;color:#1a1a2e}@media print{body{margin:1.5cm}}table{page-break-inside:avoid}@page{size:A4;margin:2cm}</style>'
+    +'<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">'
+    +'</head><body>'+body.outerHTML
+    +'<script>window.onload=function(){window.print();}<\/script></body></html>');
+  win.document.close();
+}
+
+/* ── Add / Edit Volunteer modal ── */
+function addVolunteer() { openVolModal(null); }
+function editVolunteer(id) {
+  var v = adminData.volunteers.find(function(x){return x[0]===id;});
+  openVolModal(v);
+}
+function openVolModal(v) {
+  var isNew = !v;
+  var allEvals = adminData.externals.map(function(e){
+    var checked = v && (v[6]||[]).includes(e.username) ? 'checked' : '';
+    return '<label style="display:flex;align-items:center;gap:6px;padding:5px 0;font-size:.83rem"><input type="checkbox" value="'+e.username+'" '+checked+'> '+esc(e.name)+' ('+esc(e.role)+')</label>';
+  }).join('');
+  // Also include volunteer usernames as possible evaluators
+  var volEvals = adminData.volunteers.map(function(ve){
+    if(v && ve[0]===v[0]) return ''; // don't self-assign
+    var checked = v && (v[6]||[]).includes(ve[10]) ? 'checked' : '';
+    return '<label style="display:flex;align-items:center;gap:6px;padding:5px 0;font-size:.83rem"><input type="checkbox" value="'+ve[10]+'" '+checked+'> '+esc(ve[2])+'</label>';
+  }).join('');
+  ge('admin-modal-body').innerHTML =
+    '<div style="font-size:1rem;font-weight:700;margin-bottom:1rem">'+(isNew?'➕ Ajouter un volontaire':'✏️ Modifier : '+esc(v[2]))+'</div>'
+    +'<div class="fg"><label>Nom complet *</label><input id="vm-name" value="'+esc(v?v[2]:'')+'" placeholder="NOM Prénom"></div>'
+    +'<div class="fg"><label>ID PMI *</label><input id="vm-pmi" value="'+esc(v?v[1]:'')+'" placeholder="PMICC-XXXXXXX"></div>'
+    +'<div class="fg"><label>Rôle(s) (séparés par | ) *</label><input id="vm-roles" value="'+esc(v?(v[3]||[]).join(' | '):'')+'" placeholder="Rôle 1 | Rôle 2"></div>'
+    +'<div class="fg"><label>Département *</label><input id="vm-dept" value="'+esc(v?v[4]:'')+'" placeholder="VP Membership"></div>'
+    +'<div class="fg"><label>Département associé</label><input id="vm-deptassoc" value="'+esc(v?v[5]||'':'')+'" placeholder="(optionnel)"></div>'
+    +'<div class="fg"><label>Email</label><input id="vm-email" value="'+esc(v?v[7]:'')+'" type="email"></div>'
+    +'<div class="fg"><label>Username (connexion) *</label><input id="vm-user" value="'+esc(v?v[10]:'')+'" placeholder="prenom"></div>'
+    +'<div class="fg"><label>Évaluateurs assignés</label>'
+    +'<div style="max-height:180px;overflow-y:auto;border:1.5px solid #e0e0e0;border-radius:8px;padding:.7rem" id="vm-evals-list">'
+    +'<div style="font-size:.7rem;color:var(--me);font-weight:700;margin-bottom:.4rem">Évaluateurs externes</div>'+allEvals
+    +'<div style="font-size:.7rem;color:var(--me);font-weight:700;margin:.6rem 0 .4rem">Volontaires évaluateurs</div>'+volEvals
+    +'</div></div>'
+    +'<div style="display:flex;gap:.5rem;margin-top:1rem">'
+    +'<button class="btn btn-su" style="flex:1;justify-content:center" onclick="saveVolunteer('+(v?v[0]:'null')+')">💾 Enregistrer</button>'
+    +'<button class="btn btn-gh" style="flex:1;justify-content:center" onclick="closeAdminModal()">Annuler</button>'
+    +'</div>';
+  ge('admin-modal').classList.add('open');
+}
+function saveVolunteer(id) {
+  var name=ge('vm-name').value.trim(), pmi=ge('vm-pmi').value.trim();
+  var roles=ge('vm-roles').value.split('|').map(function(r){return r.trim();}).filter(Boolean);
+  var dept=ge('vm-dept').value.trim(), deptAssoc=ge('vm-deptassoc').value.trim()||null;
+  var email=ge('vm-email').value.trim(), uname=ge('vm-user').value.trim().toLowerCase();
+  if(!name||!pmi||!roles.length||!dept||!uname){alert('Remplissez tous les champs obligatoires (*).');return;}
+  var evals=[...ge('vm-evals-list').querySelectorAll('input:checked')].map(function(x){return x.value;});
+  if(!id){
+    var newId=Math.max.apply(null,adminData.volunteers.map(function(x){return x[0];}))+1;
+    adminData.volunteers.push([newId,pmi,name,roles,dept,deptAssoc,evals,email,46000,46752,uname]);
+  } else {
+    var v=adminData.volunteers.find(function(x){return x[0]===id;});
+    if(v){v[1]=pmi;v[2]=name;v[3]=roles;v[4]=dept;v[5]=deptAssoc;v[6]=evals;v[7]=email;v[10]=uname;}
+  }
+  closeAdminModal();
+  renderVolunteerTab(ge('admin-tab-content'));
+  ge('adm-vol').textContent=adminData.volunteers.length;
+  alert('✅ Enregistré. Note: les changements sont en mémoire. Rechargez la page pour revenir aux données d\'origine.');
+}
+function deleteVolunteer(id) {
+  var v=adminData.volunteers.find(function(x){return x[0]===id;});
+  if(!v) return;
+  if(!confirm('Supprimer '+v[2]+' ? Cette action est locale et ne modifie pas le fichier source.')) return;
+  adminData.volunteers=adminData.volunteers.filter(function(x){return x[0]!==id;});
+  renderVolunteerTab(ge('admin-tab-content'));
+  ge('adm-vol').textContent=adminData.volunteers.length;
+}
+
+/* ── Add / Edit Evaluator modal ── */
+function addEvaluator() { openEvalModal(null); }
+function editEvaluator(username) {
+  var e = adminData.externals.find(function(x){return x.username===username;});
+  openEvalModal(e);
+}
+function openEvalModal(e) {
+  var isNew=!e;
+  var uval = e ? e.username : '';
+  ge('admin-modal-body').innerHTML =
+    '<div style="font-size:1rem;font-weight:700;margin-bottom:1rem">'+(isNew?'Ajouter un evaluateur':'Modifier : '+esc(e.name))+'</div>'
+    +'<div class="fg"><label>Nom complet *</label><input id="em-name" value="'+esc(e?e.name:'')+'" placeholder="Prenom NOM"></div>'
+    +'<div class="fg"><label>Username *</label><input id="em-user" value="'+esc(uval)+'" placeholder="prenom" '+(e?'readonly':'')+'></div>'
+    +'<div class="fg"><label>Role / Titre *</label><input id="em-role" value="'+esc(e?e.role:'')+'" placeholder="Vice-President..."></div>'
+    +'<div class="fg"><label>Departement *</label><input id="em-dept" value="'+esc(e?e.dept:'')+'" placeholder="VP Membership"></div>'
+    +'<div style="display:flex;gap:.5rem;margin-top:1rem">'
+    +'<button class="btn btn-su" style="flex:1;justify-content:center" onclick="saveEvaluator(this.dataset.u)" data-u="'+esc(uval)+'">Enregistrer</button>'
+    +'<button class="btn btn-gh" style="flex:1;justify-content:center" onclick="closeAdminModal()">Annuler</button>'
+    +'</div>';
+  ge('admin-modal').classList.add('open');
+}
+
+function saveEvaluator(username) {
+  var name=ge('em-name').value.trim(), uname=(username||ge('em-user').value.trim().toLowerCase());
+  var role=ge('em-role').value.trim(), dept=ge('em-dept').value.trim();
+  if(!name||!uname||!role||!dept){alert('Remplissez tous les champs (*).');return;}
+  if(!username){
+    if(adminData.externals.find(function(e){return e.username===uname;})){alert('Ce username existe déjà.');return;}
+    adminData.externals.push({name:name,username:uname,role:role,dept:dept});
+  } else {
+    var e=adminData.externals.find(function(x){return x.username===username;});
+    if(e){e.name=name;e.role=role;e.dept=dept;}
+  }
+  closeAdminModal();
+  renderEvaluatorTab(ge('admin-tab-content'));
+}
+function deleteEvaluator(username) {
+  var e=adminData.externals.find(function(x){return x.username===username;});
+  if(!e) return;
+  if(!confirm('Supprimer l\'évaluateur '+e.name+' ?')) return;
+  adminData.externals=adminData.externals.filter(function(x){return x.username!==username;});
+  // Remove from volunteer assignments too
+  adminData.volunteers.forEach(function(v){v[6]=(v[6]||[]).filter(function(u){return u!==username;});});
+  renderEvaluatorTab(ge('admin-tab-content'));
+}
+function closeAdminModal() { ge('admin-modal').classList.remove('open'); }
 
 /* ===== CORRECTION MODAL ===== */
 function openCorrModal() {
