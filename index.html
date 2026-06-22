@@ -537,6 +537,8 @@ function switchTab(n) {
 
 /* ===== AUTO-EVAL SECTION ===== */
 function renderAutoSec(cont) {
+  // Check if admin has reset this eval
+  if (ld('adm_reset_resetA_'+CU.username)) { rm('doneA_'+CU.username); rm('adm_reset_resetA_'+CU.username); }
   var done = ld('doneA_'+CU.username);
   if (done) {
     cont.innerHTML = '<div class="card"><div class="card-hd"><div class="cion ig">✅</div><div><div class="ctitle">Auto-évaluation soumise</div><div class="csub">Merci pour votre participation !</div></div></div>'
@@ -571,6 +573,8 @@ function onOSel() {
   var id = parseInt(ge('osel').value);
   if (!id) { ge('ofc').innerHTML=''; return; }
   curTargetId = id;
+  // Check admin reset
+  if (ld('adm_reset_resetO_'+CU.username+'_'+id)) { rm('doneO_'+CU.username+'_'+id); rm('adm_reset_resetO_'+CU.username+'_'+id); }
   var done = ld('doneO_'+CU.username+'_'+id);
   if (done) {
     var v=getVol(id);
@@ -865,7 +869,126 @@ function computeScore(mode) {
 }
 
 /* ===== NAVIGATION ===== */
-function nextStep(mode) { gather(mode); if(curStep<4){curStep++;buildSteps(mode==='auto'?'afc':'ofc',mode);} }
+/* ===== VALIDATION ===== */
+function validateStep(mode) {
+  var errors = [];
+  clearValidationErrors();
+
+  if (curStep === 1) {
+    // Check every star in every role block
+    var roles = mode==='auto' ? CU.roles : ((getVol(curTargetId)||{3:[]})[3]||[]);
+    var crit = getCriteria(mode);
+    roles.forEach(function(r, i) {
+      var p = 'r'+(i+1);
+      crit.forEach(function(c) {
+        var rated = false;
+        document.querySelectorAll('[data-id="'+p+'_'+c.key+'"]').forEach(function(s) {
+          if (s.classList.contains('on')) rated = true;
+        });
+        if (!rated) {
+          errors.push({field: p+'_'+c.key+'_stars', msg: 'Veuillez noter «'+c.label+'» pour le rôle '+i+1+' ('+r+')'});
+          highlightError(p+'_'+c.key+'_stars');
+        }
+      });
+    });
+  }
+
+  if (curStep === 2) {
+    // Check every behavioural star
+    BEHAV.forEach(function(b) {
+      var rated = false;
+      document.querySelectorAll('[data-id="c_'+b.key+'"]').forEach(function(s) {
+        if (s.classList.contains('on')) rated = true;
+      });
+      if (!rated) {
+        errors.push({field:'c_'+b.key+'_stars', msg:'Veuillez noter «'+b.label+'»'});
+        highlightError('c_'+b.key+'_stars');
+      }
+    });
+  }
+
+  if (curStep === 3) {
+    // Appreciation must be selected
+    var apsel = document.querySelector('.apbtn.sel');
+    if (!apsel) {
+      errors.push({field:'apgrid', msg:'Veuillez sélectionner une appréciation générale'});
+      var ag = document.querySelector('.apgrid');
+      if (ag) { ag.style.outline='2.5px solid #e74c3c'; ag.style.borderRadius='8px'; }
+    }
+  }
+
+  if (curStep === 4) {
+    // Points forts and axes required
+    ['d_forts','d_axes'].forEach(function(id) {
+      var el = ge(id);
+      if (el && !el.value.trim()) {
+        var labels = {d_forts:'Points forts majeurs', d_axes:'Axes d\'amélioration'};
+        errors.push({field:id, msg:'Veuillez renseigner «'+labels[id]+'»'});
+        highlightError(id);
+      }
+    });
+    // At least one checkbox
+    var chks = document.querySelectorAll('.cbitem.chk');
+    if (chks.length === 0) {
+      errors.push({field:'cbgrp', msg:'Veuillez cocher au moins une option'});
+      var cg = document.querySelector('.cbgrp');
+      if (cg) { cg.style.outline='2.5px solid #e74c3c'; cg.style.borderRadius='8px'; }
+    }
+  }
+
+  if (errors.length > 0) {
+    showValidationErrors(errors);
+    return false;
+  }
+  return true;
+}
+
+function highlightError(id) {
+  var el = ge(id);
+  if (el) {
+    el.style.outline = '2.5px solid #e74c3c';
+    el.style.borderRadius = '6px';
+    el.classList.add('val-error');
+  }
+}
+
+function clearValidationErrors() {
+  document.querySelectorAll('.val-error').forEach(function(el) {
+    el.style.outline=''; el.classList.remove('val-error');
+  });
+  var errBox = ge('val-errbox');
+  if (errBox) errBox.remove();
+  // Clear apgrid and cbgrp outlines too
+  var ag = document.querySelector('.apgrid');
+  if (ag) { ag.style.outline=''; }
+  var cg = document.querySelector('.cbgrp');
+  if (cg) { cg.style.outline=''; }
+}
+
+function showValidationErrors(errors) {
+  var existing = ge('val-errbox');
+  if (existing) existing.remove();
+  var html = '<div id="val-errbox" style="background:#fff0f0;border:1.5px solid #e74c3c;border-radius:10px;padding:1rem;margin-top:1rem;">'
+    +'<div style="font-weight:700;font-size:.85rem;color:#c0392b;margin-bottom:.5rem">⚠️ Veuillez compléter les champs suivants avant de continuer :</div>'
+    +'<ul style="margin:0 0 0 1.2rem;padding:0;font-size:.82rem;color:#c0392b;line-height:1.8">'
+    +errors.map(function(e){return '<li>'+esc(e.msg)+'</li>';}).join('')
+    +'</ul></div>';
+  // Insert after the current section
+  var cont = document.querySelector('.fnav');
+  if (cont) cont.insertAdjacentHTML('beforebegin', html);
+  // Scroll error box into view
+  var box = ge('val-errbox');
+  if (box) box.scrollIntoView({behavior:'smooth', block:'center'});
+}
+
+function nextStep(mode) {
+  gather(mode);
+  if (curStep < 4) {
+    if (!validateStep(mode)) return; // block navigation if invalid
+    curStep++;
+    buildSteps(mode==='auto'?'afc':'ofc', mode);
+  }
+}
 function prevStep(mode) { gather(mode); if(curStep>0){curStep--;buildSteps(mode==='auto'?'afc':'ofc',mode);} }
 
 function gather(mode) {
@@ -1098,40 +1221,141 @@ function renderEvaluatorTab(cont) {
 
 /* ── Submissions tab ── */
 function renderSubmissionsTab(cont) {
-  cont.innerHTML = '<div class="card"><div class="card-hd"><div class="cion io">📊</div><div><div class="ctitle">Suivi des Soumissions</div></div>'
+  cont.innerHTML = '<div class="card"><div class="card-hd"><div class="cion io">📊</div>'
+    +'<div><div class="ctitle">Tableau de Bord des Évaluations</div>'
+    +'<div class="csub">Statut en temps réel · Cliquez ↩ Reset pour réinitialiser une évaluation</div></div>'
     +'<button class="btn btn-cy btn-sm" style="margin-left:auto" onclick="fetchAdminStats()">🔄 Actualiser</button></div>'
-    +'<div class="alert ai" id="sub-loading">ℹ️ Chargement...</div>'
+    +'<div class="alert ai" id="sub-loading" style="margin:.5rem 0">ℹ️ Chargement des données...</div>'
     +'<div id="adm-table"></div></div>';
   fetchAdminStats();
 }
+
+/* Store tracking data globally for use in reset UI */
+var _trackingRows = [];
 
 function fetchAdminStats() {
   fetch(SCRIPT_URL + '?action=getTracking&token=PMIC2026ADMIN', {redirect:'follow'})
     .then(function(r){return r.json();})
     .then(function(rows){
       var totalVol = adminData.volunteers.length;
-      if(!rows||rows.length<2){
-        var lo=ge('sub-loading');if(lo)lo.textContent='Aucune soumission : aucun formulaire soumis pour l\'instant.';
-        if(ge('adm-auto'))ge('adm-auto').textContent='0/'+totalVol;
+      var lo = ge('sub-loading'); if(lo) lo.style.display='none';
+
+      if(!rows || rows.length < 2){
+        _trackingRows = [];
+        if(ge('adm-auto')) ge('adm-auto').textContent = '0/'+totalVol;
+        renderEvalDashboard([]);
         return;
       }
-      var data=rows.slice(1);
-      var autoC=data.filter(function(r){return r[3]==='auto';}).length;
-      var peerC=data.filter(function(r){return r[3]==='others';}).length;
-      var tot=data.length;
-      if(ge('adm-auto'))ge('adm-auto').textContent=autoC+'/'+totalVol;
-      if(ge('adm-peer'))ge('adm-peer').textContent=peerC;
-      if(ge('adm-total'))ge('adm-total').textContent=tot;
-      if(ge('adm-auto-pb'))ge('adm-auto-pb').style.width=Math.round(autoC/totalVol*100)+'%';
-      var lo=ge('sub-loading');if(lo)lo.style.display='none';
-      var tbl='<table class="dtbl"><thead><tr>'+rows[0].map(function(h){return '<th>'+esc(String(h))+'</th>';}).join('')+'</tr></thead><tbody>'
-        +data.slice().reverse().map(function(row){return '<tr>'+row.map(function(cc){return '<td>'+esc(String(cc||''))+'</td>';}).join('')+'</tr>';}).join('')
-        +'</tbody></table>';
-      if(ge('adm-table'))ge('adm-table').innerHTML=tbl;
+
+      _trackingRows = rows.slice(1); // skip header
+      var data = _trackingRows;
+      var autoC = data.filter(function(r){return r[3]==='auto';}).length;
+      var peerC = data.filter(function(r){return r[3]==='others';}).length;
+      var tot   = data.length;
+
+      if(ge('adm-auto'))    ge('adm-auto').textContent    = autoC+'/'+totalVol;
+      if(ge('adm-peer'))    ge('adm-peer').textContent    = peerC;
+      if(ge('adm-total'))   ge('adm-total').textContent   = tot;
+      if(ge('adm-auto-pb')) ge('adm-auto-pb').style.width = Math.round(autoC/totalVol*100)+'%';
+
+      renderEvalDashboard(data);
     })
     .catch(function(){
-      var lo=ge('sub-loading');if(lo)lo.textContent='Impossible de charger. Vérifiez le déploiement.';
+      var lo=ge('sub-loading');
+      if(lo){lo.style.display='block';lo.textContent='Impossible de charger. Vérifiez le déploiement.';}
+      renderEvalDashboard([]);
     });
+}
+
+function renderEvalDashboard(data) {
+  var tbl = ge('adm-table');
+  if(!tbl) return;
+
+  // Build lookup: username -> {auto: true/false, peers: [targetFullName,...]}
+  var done = {};
+  data.forEach(function(row) {
+    var uname = String(row[1]||'').toLowerCase();
+    var type  = String(row[3]||'');
+    var cible = String(row[4]||'');
+    if(!done[uname]) done[uname] = {auto:false, peers:[]};
+    if(type==='auto') done[uname].auto = true;
+    if(type==='others' && cible) done[uname].peers.push(cible);
+  });
+
+  var rows = adminData.volunteers.map(function(v) {
+    var uname  = v[10];
+    var status = done[uname] || {auto:false, peers:[]};
+    var autoTag = status.auto
+      ? '<span style="background:#d4edda;color:#155724;border-radius:12px;padding:2px 9px;font-size:.72rem;font-weight:700">✅ Soumis</span>'
+      : '<span style="background:#fff3cd;color:#856404;border-radius:12px;padding:2px 9px;font-size:.72rem;font-weight:700">⏳ En attente</span>';
+    var resetBtn = status.auto
+      ? '<button class="btn btn-sm" style="background:#fee;color:#c0392b;border:1px solid #fcc;padding:3px 10px;font-size:.72rem" data-u="'+uname+'" data-t="auto" data-id="0" onclick="adminInlineReset(this.dataset.u,this.dataset.t,0,this)">↩ Reset Auto</button>'
+      : '';
+
+    // Peer evals: show each evaluator assigned
+    var evalPeers = (v[6]||[]).map(function(eu) {
+      var evUser = adminData.externals.find(function(e){return e.username===eu;}) ||
+                   adminData.volunteers.find(function(x){return x[10]===eu;});
+      var evName = evUser ? (evUser.name||evUser[2]) : eu;
+      var peerDone = done[eu] && done[eu].peers.some(function(p){return p===v[2]||p.toLowerCase().includes(v[2].toLowerCase().split(' ')[0]);});
+      var peerTag = peerDone
+        ? '<span style="background:#d4edda;color:#155724;border-radius:12px;padding:2px 7px;font-size:.68rem;font-weight:700">✅</span>'
+        : '<span style="background:#fff3cd;color:#856404;border-radius:12px;padding:2px 7px;font-size:.68rem;font-weight:700">⏳</span>';
+      var peerReset = peerDone
+        ? '<button class="btn btn-sm" style="background:#fee;color:#c0392b;border:1px solid #fcc;padding:2px 8px;font-size:.68rem;margin-left:3px" data-u="'+eu+'" data-t="others" data-id="'+v[0]+'" onclick="adminInlineReset(this.dataset.u,this.dataset.t,parseInt(this.dataset.id),this)">↩</button>'
+        : '';
+      return '<div style="display:flex;align-items:center;gap:4px;padding:2px 0">'+peerTag+'<span style="font-size:.72rem">'+esc(evName)+'</span>'+peerReset+'</div>';
+    }).join('');
+
+    return '<tr>'
+      +'<td style="font-weight:600;font-size:.82rem">'+esc(v[2])+'</td>'
+      +'<td style="font-size:.72rem;color:var(--me)">'+esc(v[1])+'</td>'
+      +'<td>'+autoTag+' '+resetBtn+'</td>'
+      +'<td style="min-width:160px">'+(evalPeers||'<span style="font-size:.72rem;color:var(--li)">Aucun évaluateur</span>')+'</td>'
+      +'</tr>';
+  }).join('');
+
+  tbl.innerHTML = '<table class="dtbl" style="font-size:.8rem">'
+    +'<thead><tr>'
+    +'<th>Volontaire</th>'
+    +'<th>ID PMI</th>'
+    +'<th>Auto-évaluation</th>'
+    +'<th>Évaluation par les pairs</th>'
+    +'</tr></thead>'
+    +'<tbody>'+rows+'</tbody>'
+    +'</table>';
+}
+
+function adminInlineReset(username, type, targetId, btn) {
+  var v = targetId ? (adminData.volunteers.find(function(x){return x[0]===targetId;})||{}) : {};
+  var who = type==='auto' ? username+' (auto-éval)' : username+' → '+(v[2]||targetId);
+  if(!confirm('Réinitialiser : '+who+' ?\nL\'utilisateur pourra re-soumettre. La soumission existante dans Sheets est conservée.')) return;
+
+  /* Mark reset so client clears its "done" flag on next load */
+  var resetKey = type==='auto'
+    ? 'adm_reset_resetA_'+username
+    : 'adm_reset_resetO_'+username+'_'+targetId;
+  sv(resetKey, '1');
+
+  /* Notify Apps Script (fire-and-forget) */
+  fetch(SCRIPT_URL, {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({formType:'adminConfig',token:ADMIN_TOKEN,op:'resetEval',resetKey:resetKey,username:username,type:type,targetId:targetId}),
+    mode:'no-cors'
+  }).catch(function(){});
+
+  /* Update UI immediately */
+  btn.closest('td').innerHTML = '<span style="background:#cce5ff;color:#004085;border-radius:12px;padding:2px 9px;font-size:.72rem;font-weight:700">↩ Réinitialisé</span>';
+  /* Update stat card */
+  if(type==='auto'){
+    var autoEl = ge('adm-auto');
+    if(autoEl){
+      var parts = autoEl.textContent.split('/');
+      var newCount = Math.max(0,(parseInt(parts[0])||1)-1);
+      autoEl.textContent = newCount+'/'+(parts[1]||adminData.volunteers.length);
+    }
+  }
 }
 
 /* ── PDF Report tab ── */
