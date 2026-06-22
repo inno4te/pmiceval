@@ -270,7 +270,7 @@ footer{text-align:center;padding:2rem 1.5rem 3rem;font-size:.74rem;color:var(--l
 
 <script>
 /* ===== CONFIGURATION ===== */
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwwnyLacgjaEghPzXtEK8oBA04xqqUB0RvzzDH0Ts21WD0ik7SaMjFrbkcLJmV9FfjY/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbye3ZETWo7816HdUvfsO83LsB8EMLjRnfEnaDIQiM0JnGFenl-KhO4t5gAUflNLZ8HK/exec';
 
 /* ===== VOLUNTEER DATA — 97 members =====
    Format: [id, pmiId, name, roles[], dept, deptAssoc|null, evaluators[], email, startSerial, endSerial, username]
@@ -988,9 +988,28 @@ function flatDraft(p, draft, mode, roles) {
 var adminData = { volunteers: null, externals: null }; // live editable copies
 
 function loadAdmin() {
-  adminData.volunteers = JSON.parse(JSON.stringify(V));   // deep copy
-  adminData.externals  = JSON.parse(JSON.stringify(EX));
-  renderAdminPage();
+  var cont = ge('admin-content');
+  if (cont) cont.innerHTML = '<div style="text-align:center;padding:3rem;color:var(--li)"><div style="font-size:2rem">⏳</div><div style="margin-top:.5rem;font-size:.85rem">Chargement des données depuis Google Sheets...</div></div>';
+  fetch(SCRIPT_URL + '?action=getConfig&token=PMIC2026ADMIN', {redirect:'follow'})
+    .then(function(r) { return r.json(); })
+    .then(function(cfg) {
+      if (cfg.error) throw new Error(cfg.error);
+      adminData.volunteers = cfg.volunteers || JSON.parse(JSON.stringify(V));
+      adminData.externals  = cfg.evaluators  || JSON.parse(JSON.stringify(EX));
+      renderAdminPage();
+    })
+    .catch(function(err) {
+      // Fallback to hardcoded data if Sheets unreachable
+      console.warn('Config sheet unreachable, using local data:', err.message);
+      adminData.volunteers = JSON.parse(JSON.stringify(V));
+      adminData.externals  = JSON.parse(JSON.stringify(EX));
+      renderAdminPage();
+      var warn = ge('admin-content');
+      if (warn) {
+        var banner = '<div class="alert aw" style="margin-bottom:1rem">⚠️ Mode hors-ligne : les modifications ne seront pas sauvegardées sur le serveur. Vérifiez le déploiement Apps Script.</div>';
+        warn.innerHTML = banner + warn.innerHTML;
+      }
+    });
 }
 
 function renderAdminPage() {
@@ -1259,25 +1278,33 @@ function saveVolunteer(id) {
   var email=ge('vm-email').value.trim(), uname=ge('vm-user').value.trim().toLowerCase();
   if(!name||!pmi||!roles.length||!dept||!uname){alert('Remplissez tous les champs obligatoires (*).');return;}
   var evals=[...ge('vm-evals-list').querySelectorAll('input:checked')].map(function(x){return x.value;});
+  var v;
   if(!id){
-    var newId=Math.max.apply(null,adminData.volunteers.map(function(x){return x[0];}))+1;
-    adminData.volunteers.push([newId,pmi,name,roles,dept,deptAssoc,evals,email,46000,46752,uname]);
+    var newId=Math.max.apply(null,adminData.volunteers.map(function(x){return x[0]||0;}))+1;
+    v=[newId,pmi,name,roles,dept,deptAssoc,evals,email,46020,46387,uname];
+    adminData.volunteers.push(v);
   } else {
-    var v=adminData.volunteers.find(function(x){return x[0]===id;});
+    v=adminData.volunteers.find(function(x){return x[0]===id;});
     if(v){v[1]=pmi;v[2]=name;v[3]=roles;v[4]=dept;v[5]=deptAssoc;v[6]=evals;v[7]=email;v[10]=uname;}
   }
   closeAdminModal();
   renderVolunteerTab(ge('admin-tab-content'));
-  ge('adm-vol').textContent=adminData.volunteers.length;
-  alert('✅ Enregistré. Note: les changements sont en mémoire. Rechargez la page pour revenir aux données d\'origine.');
+  if(ge('adm-vol'))ge('adm-vol').textContent=adminData.volunteers.length;
+  // Save to Sheets
+  adminApiCall({op:id?'editVolunteer':'addVolunteer', volunteer:v, token:ADMIN_TOKEN}, function(ok) {
+    if(!ok) alert('⚠️ Enregistré localement mais erreur de synchronisation Sheets. Vérifiez le déploiement.');
+  });
 }
 function deleteVolunteer(id) {
   var v=adminData.volunteers.find(function(x){return x[0]===id;});
   if(!v) return;
-  if(!confirm('Supprimer '+v[2]+' ? Cette action est locale et ne modifie pas le fichier source.')) return;
+  if(!confirm('Supprimer '+v[2]+' ? Cette action est permanente et sera synchronisée avec Google Sheets.')) return;
   adminData.volunteers=adminData.volunteers.filter(function(x){return x[0]!==id;});
   renderVolunteerTab(ge('admin-tab-content'));
-  ge('adm-vol').textContent=adminData.volunteers.length;
+  if(ge('adm-vol'))ge('adm-vol').textContent=adminData.volunteers.length;
+  adminApiCall({op:'deleteVolunteer', id:id, token:ADMIN_TOKEN}, function(ok){
+    if(!ok) alert('⚠️ Supprimé localement mais erreur Sheets. Rechargez pour vérifier.');
+  });
 }
 
 /* ── Add / Edit Evaluator modal ── */
@@ -1306,26 +1333,51 @@ function saveEvaluator(username) {
   var name=ge('em-name').value.trim(), uname=(username||ge('em-user').value.trim().toLowerCase());
   var role=ge('em-role').value.trim(), dept=ge('em-dept').value.trim();
   if(!name||!uname||!role||!dept){alert('Remplissez tous les champs (*).');return;}
+  var ev={name:name,username:uname,role:role,dept:dept};
   if(!username){
     if(adminData.externals.find(function(e){return e.username===uname;})){alert('Ce username existe déjà.');return;}
-    adminData.externals.push({name:name,username:uname,role:role,dept:dept});
+    adminData.externals.push(ev);
   } else {
-    var e=adminData.externals.find(function(x){return x.username===username;});
-    if(e){e.name=name;e.role=role;e.dept=dept;}
+    var ex=adminData.externals.find(function(x){return x.username===username;});
+    if(ex){ex.name=name;ex.role=role;ex.dept=dept;}
   }
   closeAdminModal();
   renderEvaluatorTab(ge('admin-tab-content'));
+  adminApiCall({op:username?'editEvaluator':'addEvaluator', evaluator:ev, token:ADMIN_TOKEN}, function(ok){
+    if(!ok) alert('⚠️ Enregistré localement mais erreur Sheets.');
+  });
 }
 function deleteEvaluator(username) {
   var e=adminData.externals.find(function(x){return x.username===username;});
   if(!e) return;
-  if(!confirm('Supprimer l\'évaluateur '+e.name+' ?')) return;
+  if(!confirm('Supprimer '+e.name+' ? Cette action est permanente et retirera cet évaluateur de tous les volontaires assignés.')) return;
   adminData.externals=adminData.externals.filter(function(x){return x.username!==username;});
-  // Remove from volunteer assignments too
   adminData.volunteers.forEach(function(v){v[6]=(v[6]||[]).filter(function(u){return u!==username;});});
   renderEvaluatorTab(ge('admin-tab-content'));
+  adminApiCall({op:'deleteEvaluator', username:username, token:ADMIN_TOKEN}, function(ok){
+    if(!ok) alert('⚠️ Supprimé localement mais erreur Sheets.');
+  });
 }
 function closeAdminModal() { ge('admin-modal').classList.remove('open'); }
+
+/* POST to Apps Script for admin config changes */
+function adminApiCall(payload, cb) {
+  payload.formType = 'adminConfig';
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify(payload),
+    mode: 'no-cors'
+  })
+  .then(function() {
+    // no-cors = opaque response, assume success
+    if (cb) cb(true);
+  })
+  .catch(function(err) {
+    console.error('adminApiCall error:', err);
+    if (cb) cb(false);
+  });
+}
 
 /* ===== CORRECTION MODAL ===== */
 function openCorrModal() {
