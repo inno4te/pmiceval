@@ -639,6 +639,22 @@ function renderSec(mode) {
     var freshComp = computeScore(mode);
     draft.computed = freshComp; sv(dk, draft);
     cont.innerHTML = renderS3(mode, draft);
+    // After render: ensure the right apprec button is visually active
+    var selBtn = cont.querySelector('.apbtn.sel');
+    if (!selBtn) {
+      // No button selected — auto-select based on avg
+      var autoL = getApprecFromAvg(freshComp.avg);
+      if (autoL) {
+        cont.querySelectorAll('.apbtn').forEach(function(b) {
+          if (b.dataset.val === autoL) {
+            b.classList.add('sel');
+            b.style.borderColor = b.dataset.col;
+            b.style.background  = b.dataset.col;
+            b.style.color = '#fff';
+          }
+        });
+      }
+    }
   }
   else cont.innerHTML=renderS4(mode,draft);
   // Restore stars
@@ -750,8 +766,10 @@ var APPRS = [
 ];
 function getApprecFromAvg(avg) {
   var a = parseFloat(avg)||0;
+  // If no score yet, don't pre-select — return null so user can choose
+  if (a === 0) return null;
   for(var i=0;i<APPRS.length;i++){if(a>=APPRS[i].min&&a<APPRS[i].max)return APPRS[i].l;}
-  return a>=5?'Excellent':'—';
+  return a>=5?'Excellent':APPRS[0].l;
 }
 function renderS3(mode,draft) {
   // Compute scores from draft directly (DOM stars may not exist on this step)
@@ -765,7 +783,9 @@ function renderS3(mode,draft) {
   // Auto-determine appreciation from avg
   var autoApprec = getApprecFromAvg(avg);
   var appreciation = draft.appreciation || autoApprec;
-  var appColor = (APPRS.find(function(a){return a.l===appreciation;})||{col:'var(--or)'}).col;
+  var appColor = appreciation
+    ? (APPRS.find(function(a){return a.l===appreciation;})||{col:'#5B2DB8'}).col
+    : '#5B2DB8';
   return '<div style="margin-bottom:1.1rem"><div style="font-size:.95rem;font-weight:700;margin-bottom:4px">Score Global & Appréciation</div>'
     +'<div style="font-size:.78rem;color:var(--li)">Score calculé automatiquement. L\'appréciation est présélectionnée selon votre moyenne.</div></div>'
     +'<div class="sbox" id="sbox-main" style="background:linear-gradient(135deg,'+appColor+','+appColor+'cc)">'
@@ -936,13 +956,13 @@ function validateStep(mode) {
   }
 
   if (curStep === 3) {
-    // Appreciation must be selected
+    // Appreciation is auto-selected — if somehow none is selected, auto-pick first one
     var apsel = document.querySelector('.apbtn.sel');
     if (!apsel) {
-      errors.push({field:'apgrid', msg:'Veuillez sélectionner une appréciation générale'});
-      var ag = document.querySelector('.apgrid');
-      if (ag) { ag.style.outline='2.5px solid #e74c3c'; ag.style.borderRadius='8px'; }
+      var first = document.querySelector('.apbtn');
+      if (first) { first.classList.add('sel'); first.style.borderColor=first.dataset.col; first.style.background=first.dataset.col; first.style.color='#fff'; }
     }
+    // No error — always allow proceeding past appreciation step
   }
 
   if (curStep === 4) {
@@ -1027,7 +1047,9 @@ function gather(mode) {
   document.querySelectorAll('.sbtn.on').forEach(function(b){draft.ratings[b.dataset.id]=parseInt(b.dataset.val);});
   document.querySelectorAll('[id$="_just"]').forEach(function(el){if(el.value!==undefined)draft.rjust[el.id.replace('_just','')]=el.value;});
   ['r1_realisations','r1_difficultes','r2_realisations','r2_difficultes','d_forts','d_axes','d_comp','d_comm'].forEach(function(id){var el=ge(id);if(el)draft[id]=el.value;});
-  var apsel=document.querySelector('.apbtn.sel'); if(apsel) draft.appreciation=apsel.dataset.val;
+  var apsel=document.querySelector('.apbtn.sel');
+  if(apsel) draft.appreciation=apsel.dataset.val;
+  else if(draft.appreciation) { /* keep existing */ }
   var chks=[...document.querySelectorAll('.cbitem.chk')].map(function(c){return c.dataset.val;}).filter(Boolean);
   // Append "Autre" free text if present
   var autreAutoEl=ge('autre_interets'), autrePeerEl=ge('autre_recomm');
