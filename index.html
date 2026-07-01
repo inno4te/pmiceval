@@ -636,13 +636,14 @@ function renderSec(mode) {
   else if(curStep===1) cont.innerHTML=renderS1(mode,draft);
   else if(curStep===2) cont.innerHTML=renderS2(mode,draft);
   else if(curStep===3) {
+    var s3dk = draftKey(mode);
     var freshComp = computeScore(mode);
-    draft.computed = freshComp; sv(dk, draft);
+    draft.computed = freshComp;
+    sv(s3dk, draft);
     cont.innerHTML = renderS3(mode, draft);
     // After render: ensure the right apprec button is visually active
     var selBtn = cont.querySelector('.apbtn.sel');
     if (!selBtn) {
-      // No button selected — auto-select based on avg
       var autoL = getApprecFromAvg(freshComp.avg);
       if (autoL) {
         cont.querySelectorAll('.apbtn').forEach(function(b) {
@@ -655,6 +656,12 @@ function renderSec(mode) {
         });
       }
     }
+    // Update live score display in DOM
+    var ts=ge('tot-score'); if(ts) ts.textContent=freshComp.total;
+    var td=ge('tot-denom'); if(td) td.textContent='/'+freshComp.maxTotal;
+    var rd=ge('role-d'); if(rd) rd.textContent=freshComp.roleTot+'/'+(freshComp.maxTotal-25);
+    var bd=ge('behav-d'); if(bd) bd.textContent=freshComp.behTot+'/25';
+    var ad=ge('avg-d'); if(ad) ad.textContent=freshComp.avg+'/5';
   }
   else cont.innerHTML=renderS4(mode,draft);
   // Restore stars
@@ -864,9 +871,13 @@ function toggleCb(el) {
 function computeScore(mode) {
   var roles = mode==='auto' ? CU.roles : ((getVol(curTargetId)||{3:[]})[3]||[]);
   var crit = getCriteria(mode);
-  var dk = draftKey(mode);
-  var draft = ld(dk) || {};
+  var csdk = draftKey(mode);
+  var draft = ld(csdk) || {};
   var ratings = draft.ratings || {};
+  // Debug: if no ratings found, log available keys
+  if (Object.keys(ratings).length === 0) {
+    console.warn('computeScore: no ratings in draft for key', csdk, 'localStorage keys:', Object.keys(localStorage).filter(function(k){return k.indexOf('pmic26_')===0;}).join(', '));
+  }
 
   var roleTot=0, maxRole=0;
   roles.forEach(function(r,i){
@@ -1032,9 +1043,12 @@ function showValidationErrors(errors) {
 function nextStep(mode) {
   gather(mode);
   if (curStep < 4) {
-    if (!validateStep(mode)) return; // block navigation if invalid
+    if (!validateStep(mode)) return;
     curStep++;
     buildSteps(mode==='auto'?'afc':'ofc', mode);
+    // Scroll to top of form
+    var fc = ge(mode==='auto'?'afc':'ofc');
+    if (fc) fc.scrollIntoView({behavior:'smooth', block:'start'});
   }
 }
 function prevStep(mode) { gather(mode); if(curStep>0){curStep--;buildSteps(mode==='auto'?'afc':'ofc',mode);} }
@@ -1058,10 +1072,11 @@ function gather(mode) {
     if(mode==='others'&&autrePeerEl&&autrePeerEl.value.trim()){var idx=chks.indexOf('Autre');chks[idx]='Autre: '+autrePeerEl.value.trim();}
   }
   if(chks.length){ if(mode==='auto') draft.interets=chks; else draft.recommandations=chks; }
-  // Always recompute from draft before saving so step 3 has fresh numbers
+  // Save ratings first, then computeScore reads from storage correctly
+  sv(dk, draft);
   var comp = computeScore(mode);
   draft.computed = comp;
-  sv(dk,draft);
+  sv(dk, draft); // save again with computed scores
 }
 
 function saveDraft(mode, btn) {
