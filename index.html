@@ -270,13 +270,13 @@ footer{text-align:center;padding:2rem 1.5rem 3rem;font-size:.74rem;color:var(--l
 
 <script>
 /* ===== CONFIGURATION ===== */
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbye3ZETWo7816HdUvfsO83LsB8EMLjRnfEnaDIQiM0JnGFenl-KhO4t5gAUflNLZ8HK/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxJvvROIoi66FAh0WPdqNKC2zxZ7vU8h_VHSzQ2myNHAIq5ZKRhAQBuXC9rLkfldFsj/exec';
 
 /* ===== VOLUNTEER DATA — 97 members =====
    Format: [id, pmiId, name, roles[], dept, deptAssoc|null, evaluators[], email, startSerial, endSerial, username]
 */
 const V = [
-[1,"PMICC-12037026","ABOSSOLO Martin-Landry",["Recruitment Events Coordinator"],"VP Membership",null,["bertrand","noella"],"abossoloml@gmail.com",45946,46387,"abossolo"],
+[1,"PMICC-12037026","ABOSSOLO Martin-Landry",["Recruitment Events Coordinator","Assistant Logistique & Terrain au 2ème Teambuilding des volontaires PMICC"],"VP Volunteering",null,["noella","bakary","winnie"],"abossoloml@gmail.com",45946,46387,"abossolo"],
 [2,"PMICC-10649880","ACHU PRINCE - WILL ACHU",["Assistant du Chef de Projet de la Conférence Annuelle 2026","Assistant Communication & Médias au 2ème Teambuilding PMICC"],"ALL","Tous, VP Communication",["winnie","yemele","musi"],"princewillachu@outlook.com",46090,46380,"achu"],
 [3,"PMICC-11446981","AFOUNATANG Prosper",["Email & Newsletter Coordinator"],"VP Communication",null,["yemele"],"prospernsisse@gmail.com",45925,46387,"afounatang"],
 [4,"PMICC-12390997","AMOUGOU Catherine",["Chargé(e) Recrutement et Engagement des Volontaires"],"VP Volunteering",null,["winnie","ngueukoa"],"amoukatoucha@yahoo.fr",46083,46387,"amougou"],
@@ -635,7 +635,11 @@ function renderSec(mode) {
   if(curStep===0) cont.innerHTML=renderS0(mode);
   else if(curStep===1) cont.innerHTML=renderS1(mode,draft);
   else if(curStep===2) cont.innerHTML=renderS2(mode,draft);
-  else if(curStep===3) cont.innerHTML=renderS3(mode,draft);
+  else if(curStep===3) {
+    var freshComp = computeScore(mode);
+    draft.computed = freshComp; sv(dk, draft);
+    cont.innerHTML = renderS3(mode, draft);
+  }
   else cont.innerHTML=renderS4(mode,draft);
   // Restore stars
   var ratings=draft.ratings||{};
@@ -840,32 +844,56 @@ function toggleCb(el) {
 function computeScore(mode) {
   var roles = mode==='auto' ? CU.roles : ((getVol(curTargetId)||{3:[]})[3]||[]);
   var crit = getCriteria(mode);
+  var dk = draftKey(mode);
+  var draft = ld(dk) || {};
+  var ratings = draft.ratings || {};
+
   var roleTot=0, maxRole=0;
   roles.forEach(function(r,i){
     var p='r'+(i+1), sub=0;
     crit.forEach(function(c){
-      var val=0;
-      document.querySelectorAll('[data-id="'+p+'_'+c.key+'"]').forEach(function(s){if(s.classList.contains('on'))val=parseInt(s.dataset.val)||0;});
-      sub+=val;
+      var key = p+'_'+c.key;
+      // Prefer live DOM stars; fall back to saved draft ratings
+      var val = 0;
+      var stars = document.querySelectorAll('[data-id="'+key+'"]');
+      if (stars.length) {
+        stars.forEach(function(s){if(s.classList.contains('on'))val=parseInt(s.dataset.val)||0;});
+      } else {
+        val = ratings[key] || 0;
+      }
+      sub += val;
     });
-    roleTot+=sub; maxRole+=25;
+    roleTot += sub; maxRole += 25;
     var el=ge(p+'_sub'); if(el) el.textContent=sub;
   });
+
   var behTot=0;
   BEHAV.forEach(function(b){
-    var val=0;
-    document.querySelectorAll('[data-id="c_'+b.key+'"]').forEach(function(s){if(s.classList.contains('on'))val=parseInt(s.dataset.val)||0;});
-    behTot+=val;
+    var key = 'c_'+b.key;
+    var val = 0;
+    var stars = document.querySelectorAll('[data-id="'+key+'"]');
+    if (stars.length) {
+      stars.forEach(function(s){if(s.classList.contains('on'))val=parseInt(s.dataset.val)||0;});
+    } else {
+      val = ratings[key] || 0;
+    }
+    behTot += val;
   });
+
   var sub=ge('c_sub'); if(sub) sub.textContent=behTot;
   var total=roleTot+behTot, maxT=maxRole+25;
-  var avg=maxT>0?(total/maxT*5).toFixed(1):0;
+  var avg=maxT>0?(total/maxT*5).toFixed(2):'0.00';
+  var avgDisp=(total/maxT*5).toFixed(1);
+
+  // Update DOM if score box is visible (step 3)
   var ts=ge('tot-score'); if(ts) ts.textContent=total;
   var td=ge('tot-denom'); if(td) td.textContent='/'+maxT;
   var rd=ge('role-d'); if(rd) rd.textContent=roleTot+'/'+maxRole;
   var bd=ge('behav-d'); if(bd) bd.textContent=behTot+'/25';
-  var ad=ge('avg-d'); if(ad) ad.textContent=avg+'/5';
-  scores.computed={roleTot:roleTot,behTot:behTot,total:total,maxTotal:maxT,avg:avg};
+  var ad=ge('avg-d'); if(ad) ad.textContent=avgDisp+'/5';
+
+  scores.computed={roleTot:roleTot,behTot:behTot,total:total,maxTotal:maxT,avg:avgDisp};
+  return scores.computed;
 }
 
 /* ===== NAVIGATION ===== */
@@ -1008,7 +1036,9 @@ function gather(mode) {
     if(mode==='others'&&autrePeerEl&&autrePeerEl.value.trim()){var idx=chks.indexOf('Autre');chks[idx]='Autre: '+autrePeerEl.value.trim();}
   }
   if(chks.length){ if(mode==='auto') draft.interets=chks; else draft.recommandations=chks; }
-  if(scores.computed) draft.computed=scores.computed;
+  // Always recompute from draft before saving so step 3 has fresh numbers
+  var comp = computeScore(mode);
+  draft.computed = comp;
   sv(dk,draft);
 }
 
@@ -1112,26 +1142,36 @@ var adminData = { volunteers: null, externals: null }; // live editable copies
 
 function loadAdmin() {
   var cont = ge('admin-content');
-  if (cont) cont.innerHTML = '<div style="text-align:center;padding:3rem;color:var(--li)"><div style="font-size:2rem">⏳</div><div style="margin-top:.5rem;font-size:.85rem">Chargement des données depuis Google Sheets...</div></div>';
+  if (cont) cont.innerHTML = '<div style="text-align:center;padding:3rem;color:var(--li)"><div style="font-size:2rem">⏳</div><div style="margin-top:.5rem;font-size:.85rem">Chargement depuis Google Sheets...</div></div>';
+
   fetch(SCRIPT_URL + '?action=getConfig&token=PMIC2026ADMIN', {redirect:'follow'})
     .then(function(r) { return r.json(); })
     .then(function(cfg) {
       if (cfg.error) throw new Error(cfg.error);
-      adminData.volunteers = cfg.volunteers || JSON.parse(JSON.stringify(V));
-      adminData.externals  = cfg.evaluators  || JSON.parse(JSON.stringify(EX));
+      // Only use Sheets data if it has volunteers (sheet was seeded)
+      if (cfg.volunteers && cfg.volunteers.length > 0) {
+        adminData.volunteers = cfg.volunteers;
+        adminData.externals  = cfg.evaluators || [];
+      } else if (!adminData.volunteers) {
+        // Sheets empty — use local hardcoded data
+        adminData.volunteers = JSON.parse(JSON.stringify(V));
+        adminData.externals  = JSON.parse(JSON.stringify(EX));
+      }
       renderAdminPage();
     })
-    .catch(function(err) {
-      // Fallback to hardcoded data if Sheets unreachable
-      console.warn('Config sheet unreachable, using local data:', err.message);
-      adminData.volunteers = JSON.parse(JSON.stringify(V));
-      adminData.externals  = JSON.parse(JSON.stringify(EX));
-      renderAdminPage();
-      var warn = ge('admin-content');
-      if (warn) {
-        var banner = '<div class="alert aw" style="margin-bottom:1rem">⚠️ Mode hors-ligne : les modifications ne seront pas sauvegardées sur le serveur. Vérifiez le déploiement Apps Script.</div>';
-        warn.innerHTML = banner + warn.innerHTML;
+    .catch(function() {
+      // Network error — use local data (offline mode)
+      if (!adminData.volunteers) {
+        adminData.volunteers = JSON.parse(JSON.stringify(V));
+        adminData.externals  = JSON.parse(JSON.stringify(EX));
       }
+      renderAdminPage();
+      // Show offline warning
+      setTimeout(function() {
+        var c = ge('admin-content');
+        if (c) c.insertAdjacentHTML('afterbegin',
+          '<div class="alert aw" style="margin-bottom:1rem">⚠️ Mode hors-ligne — modifications non synchronisées avec Sheets. Vérifiez votre connexion et le déploiement Apps Script.</div>');
+      }, 100);
     });
 }
 
@@ -1191,8 +1231,11 @@ function renderVolunteerTab(cont) {
       +'</td></tr>';
   }).join('');
   cont.innerHTML = '<div class="card">'
-    +'<div class="card-hd"><div class="cion io">📋</div><div><div class="ctitle">Gestion des Volontaires</div><div class="csub">'+adminData.volunteers.length+' volontaires</div></div>'
-    +'<button class="btn btn-su btn-sm" style="margin-left:auto" onclick="addVolunteer()">+ Ajouter</button></div>'
+    +'<div class="card-hd"><div class="cion io">📋</div><div><div class="ctitle">Gestion des Volontaires</div><div class="csub">'+adminData.volunteers.length+' volontaires — données de la session en cours</div></div>'
+    +'<div style="display:flex;gap:.5rem;margin-left:auto">'
+    +'<button class="btn btn-su btn-sm" onclick="addVolunteer()">+ Ajouter</button>'
+    +'<button class="btn btn-cy btn-sm" onclick="pushAllToSheets()" title="Sauvegarder toutes les modifications sur Google Sheets">☁️ Sync Sheets</button>'
+    +'</div></div>'
     +'<table class="dtbl"><thead><tr><th>ID PMI</th><th>Nom</th><th>Rôle(s)</th><th>Département</th><th>Évaluateurs</th><th>Actions</th></tr></thead>'
     +'<tbody>'+rows+'</tbody></table></div>';
 }
@@ -1583,6 +1626,35 @@ function deleteEvaluator(username) {
   });
 }
 function closeAdminModal() { ge('admin-modal').classList.remove('open'); }
+
+/* Push all local changes to Google Sheets */
+function pushAllToSheets() {
+  var btn = event.target;
+  btn.textContent = '⏳ Sync...';
+  btn.disabled = true;
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({
+      formType: 'adminConfig',
+      token: ADMIN_TOKEN,
+      op: 'saveAll',
+      volunteers: adminData.volunteers,
+      evaluators: adminData.externals
+    }),
+    mode: 'no-cors'
+  })
+  .then(function() {
+    btn.textContent = '✅ Synchronisé';
+    btn.disabled = false;
+    setTimeout(function(){ btn.textContent = '☁️ Sync Sheets'; }, 2000);
+  })
+  .catch(function() {
+    btn.textContent = '❌ Erreur';
+    btn.disabled = false;
+    setTimeout(function(){ btn.textContent = '☁️ Sync Sheets'; }, 2000);
+  });
+}
 
 /* POST to Apps Script for admin config changes */
 function adminApiCall(payload, cb) {
